@@ -1,0 +1,55 @@
+"use client"
+
+import React, { useState } from 'react'
+import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
+import Logo from "@/public/icons/lit_laces.png"
+import MenuIcon from "@/public/icons/menu.svg"
+import SearchIcon from "@/public/icons/search.svg"
+import Image from 'next/image';
+import SideNav from './SideNav';
+import SearchBar from "@/components/SearchBar";
+import CartDrawer from "@/components/CartDrawer";
+
+
+const Navbar = () => {
+  
+  const [isSearch,setIsSearch]=useState(false);
+  const [isCart,setIsCart]=useState(false);
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = (newOpen:boolean) => () => {
+    setOpen(newOpen);
+  };
+  const toggleSearch=(newSearchOpen:boolean)=>()=>{
+    setIsSearch(newSearchOpen);
+  }
+
+  const toggleCart=(newCartopen:boolean)=>()=>{
+    setIsCart(newCartopen);
+  }
+
+  return (
+    <div>
+    <div  className='px-6 md:px-8 flex justify-between items-center text-white bg-[#0a0a0a]'>
+        <div className='cursor-pointer'>
+            <Image src={MenuIcon} alt="menu" className='hover:scale-110 transition-all' onClick={toggleDrawer(true)}/>
+        </div>
+        <div className='cursor-pointer'>
+            <Image src={Logo} alt="logo" width={60} height={60} className='block md:hidden'/>
+            <Image src={Logo} alt="logo" width={70} height={70} className='hidden md:block'/>
+        </div>
+        <div>
+            <div className='flex gap-4 md:gap-8 items-center justify-center cursor-pointer'>
+            <Image src={SearchIcon} alt="search" className='hover:scale-110 transition-all' onClick={toggleSearch(true)}/>
+            <LocalMallOutlinedIcon className='hover:scale-110 transition-all' onClick={toggleCart(true)}/>
+            </div>
+        </div>
+    </div>
+  <SideNav open={open} toggleDrawer={toggleDrawer}/>
+  <SearchBar isSearch={isSearch} toggleSearch={toggleSearch}/>
+  <CartDrawer isCart={isCart} toggleCart={toggleCart}/>
+    </div>
+  )
+}
+
+export default Navbar
