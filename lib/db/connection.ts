@@ -26,7 +26,7 @@ if(!cached.promise)
 
 cached.conn=await cached.promise;
 (global as any).mongoose=cached;
-console.log("Connected to MONGO_DB")
 
+console.log("Connected to MONGO_DB")
 return cached.conn
 }
