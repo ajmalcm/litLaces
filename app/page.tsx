@@ -1,3 +1,4 @@
+"use client"
 import Banner from "@/components/Banner";
 import Brands from "@/components/Brands";
 import 'swiper/css';
@@ -6,24 +7,14 @@ import 'swiper/css/navigation';
 import HomeAbout from "@/components/HomeAbout";
 import EmailSection from "@/components/EmailSection";
 import { BannerItems } from "@/utils/temp";
-
-async function getUsers(): Promise<any> {
-  const res = await fetch(`http://localhost:3000/api/user`, {
-    cache: "no-store", // ⛔ Prevents caching (use "force-cache" for caching)
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch users");
-  }
-
-  return res.json();
-}
+import { useGetUsersQuery } from "@/redux/services/userReducers";
 
 
-export  const  Home=async ()=> {
 
-  const users = await getUsers();
-  console.log(users);
+  const  Home= ()=> {
+  
+  const {isLoading,data,error} = useGetUsersQuery("");
+  console.log(data?.message);
 
   return (
    <div>
