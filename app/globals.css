@@ -65,6 +65,13 @@ body {
   background-color: #eee;
 } */
 
+.text-blue-500{
+  color: #3B82F6;
+}
+.text-purple-500{
+  color:#A855F7;
+}
+
 .pagination button{
   outline: white !important;
   color: white !important;
