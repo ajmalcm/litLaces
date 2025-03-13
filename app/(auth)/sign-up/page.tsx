@@ -5,6 +5,7 @@ import Link from "next/link";
 
 export default function Signup() {
   const [avatar, setAvatar] = useState(null);
+  const [signUpDetails,setSighnUpDetails]=useState({name:"",email:"",password:"",confirmpassword:""})
 
   const handleAvatarChange = (e:any) => {
     const file = e.target.files[0];
@@ -20,6 +21,12 @@ export default function Signup() {
   const handleRemoveAvatar = () => {
     setAvatar(null);
   };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setSighnUpDetails({ ...signUpDetails, [name]: value });
+  }
+
+  const { name, email, password, confirmpassword } = signUpDetails;
 
   return (
     <div className="min-h-[70vh] bg-black text-white flex items-center justify-center p-6">
@@ -38,6 +45,10 @@ export default function Signup() {
               id="name"
               className="w-full mt-1 p-3 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 focus:ring-2 focus:ring-gray-600 focus:outline-none"
               placeholder="Enter your name"
+              name="name"
+              value={name}
+              onChange={handleChange}
+              
             />
           </div>
           <div className="mb-4">
@@ -50,6 +61,9 @@ export default function Signup() {
             <input
               type="email"
               id="email"
+              name="email"
+              value={email}
+              onChange={handleChange}
               className="w-full mt-1 p-3 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 focus:ring-2 focus:ring-gray-600 focus:outline-none"
               placeholder="Enter your email"
             />
@@ -64,6 +78,9 @@ export default function Signup() {
             <input
               type="password"
               id="password"
+              name="password"
+              value={password}
+              onChange={handleChange}
               className="w-full mt-1 p-3 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 focus:ring-2 focus:ring-gray-600 focus:outline-none"
               placeholder="Create a password"
             />
@@ -78,6 +95,9 @@ export default function Signup() {
             <input
               type="password"
               id="confirm-password"
+              name="confirmpassword"
+              value={confirmpassword}
+              onChange={handleChange}
               className="w-full mt-1 p-3 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 focus:ring-2 focus:ring-gray-600 focus:outline-none"
               placeholder="Re-enter your password"
             />
@@ -93,6 +113,8 @@ export default function Signup() {
               type="file"
               id="avatar"
               accept="image/*"
+              name="avatar"
+              // value={avatar}
               onChange={handleAvatarChange}
               className="w-full mt-1 p-3 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-white hover:file:bg-gray-600"
             />
@@ -123,9 +145,9 @@ export default function Signup() {
             Sign Up
           </button>
         </form>
-        <p className="text-sm text-gray-400 text-center mt-6">
+        <p className="text-sm text-gray-400 text- mt-6">
           Already have an account?{" "}
-          <Link href="/login" className="text-gray-200 underline">
+          <Link href="/login" className="text-gray-200 underlin</p>e">
             Log in
           </Link>
         </p>
