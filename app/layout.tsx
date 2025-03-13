@@ -1,4 +1,3 @@
-"use client"
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Link from "next/link";
@@ -6,8 +5,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import SideNav from "@/components/SideNav";
 import Footer from "@/components/Footer";
-import { Provider } from "react-redux";
-import { store } from "@/redux/store";
+import Providers from "@/components/Providers";
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Provider store={store}>
+      <Providers>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -42,7 +41,7 @@ export default function RootLayout({
        </div>
        <Footer/>
       </body>
-      </Provider>
+      </Providers>
     </html>
   );
 }
