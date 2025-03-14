@@ -1,4 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
+import jwt from "jsonwebtoken"
+import bcrypt from "bcryptjs"
 
 interface User extends Document {
   name: string;
@@ -13,11 +15,32 @@ const UserSchema = new Schema<User>(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    avatar: { type: String },
+    password: { type: String, required: true,select:false },
+    avatar: { public_id:{
+      type:String,
+      // required:true
+      default:""
+  },
+  url:{
+      type:String,
+      // required:true
+      default:""
+  } },
     role: { type: String, enum: ["user", "admin"], default: "user" },
   },
   { timestamps: true }
 );
+
+
+UserSchema.methods.comparePassword=async function(enteredPassword : string){
+return await bcrypt.compare(enteredPassword,this.password);
+}
+
+UserSchema.methods.getJwtToken=function(){
+ 
+  return jwt.sign({id:this._id},process.env.JWT_SECRET as jwt.Secret,{
+    expiresIn: process.env.JWT_EXPIRE ? parseInt(process.env.JWT_EXPIRE) : "1h"
+  });
+}
 
 export default mongoose.models.User || mongoose.model<User>("User", UserSchema);
