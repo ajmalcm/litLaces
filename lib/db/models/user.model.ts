@@ -36,11 +36,16 @@ UserSchema.methods.comparePassword=async function(enteredPassword : string){
 return await bcrypt.compare(enteredPassword,this.password);
 }
 
-UserSchema.methods.getJwtToken=function(){
- 
-  return jwt.sign({id:this._id},process.env.JWT_SECRET as jwt.Secret,{
-    expiresIn: process.env.JWT_EXPIRE ? parseInt(process.env.JWT_EXPIRE) : "1h"
-  });
-}
+UserSchema.methods.getJwtToken = function () {
+  const expiresIn:string = process.env.JWT_EXPIRE || "5d"; // Ensure the default value
+ // @ts-ignore
+  const token = jwt.sign(
+      { id: this._id },
+      process.env.JWT_SECRET as string,
+      { expiresIn: expiresIn }
+  );
+
+  return token;
+};
 
 export default mongoose.models.User || mongoose.model<User>("User", UserSchema);

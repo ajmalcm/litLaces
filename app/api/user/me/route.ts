@@ -1,0 +1,23 @@
+import userModel from "@/lib/db/models/user.model";
+import { isAuthenticatedUser } from "@/lib/middleware/auth";
+import { NextResponse, NextRequest } from "next/server";
+
+export async function GET(req: NextRequest) {
+    try {
+        const isAuth = await isAuthenticatedUser(req);
+
+        if (!isAuth || typeof isAuth !== "object" || !("id" in isAuth)) {
+            return NextResponse.json({ message: "Please login to access this resource." }, { status: 401 });
+        }
+
+        const user = await userModel.findById(isAuth.id);
+        if (!user) {
+            return NextResponse.json({ message: "User not found." }, { status: 404 });
+        }
+
+        return NextResponse.json({ success: true, user, message: "Authenticated User" }, { status: 200 });
+    } catch (error) {
+        console.error("GET /api/user/me Error:", error);
+        return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    }
+}
