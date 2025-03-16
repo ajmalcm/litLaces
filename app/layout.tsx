@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import SideNav from "@/components/SideNav";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
+import { Toaster } from "@/components/ui/sonner";
 
 
 const geistSans = localFont({
@@ -38,6 +39,7 @@ export default function RootLayout({
        <Navbar/>
        <div className="bg-black">
         {children}
+        <Toaster className="!bg-gray-800 !text-white"/>
        </div>
        <Footer/>
       </body>

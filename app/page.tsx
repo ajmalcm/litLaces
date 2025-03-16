@@ -7,14 +7,40 @@ import 'swiper/css/navigation';
 import HomeAbout from "@/components/HomeAbout";
 import EmailSection from "@/components/EmailSection";
 import { BannerItems } from "@/utils/temp";
-import { useGetUsersQuery } from "@/redux/services/userReducers";
-
-
+import { useLoadUserQuery } from "@/redux/services/userReducers";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setAdmin, setAuthenticated } from "@/redux/reducers/userSlice";
+import { toast } from "sonner";
 
   const  Home= ()=> {
   
-  const {isLoading,data,error} = useGetUsersQuery("");
-  console.log(data?.message);
+    const {isLoading,data,error} = useLoadUserQuery("");
+    const {isAdmin,isAuthenticated}=useSelector((state: any)=>state.auth);
+    const dispatch=useDispatch();
+    useEffect(()=>{
+      if(isLoading)
+        console.log("loading");
+
+      if (error) {
+       
+          // API error (handled response)
+          if ('data' in error) {
+            const errorMessage = (error.data as { message: string })?.message;
+            console.log(errorMessage);
+            toast.error(errorMessage);
+          }
+        }
+      console.log(isAdmin,isAuthenticated);
+      if(data)
+      {
+        console.log(data?.message);
+        dispatch(setAuthenticated(data?.success));
+        dispatch(setAdmin(data?.isAdmin));
+        toast.success(data?.message);
+        console.log(isAuthenticated,isAdmin);
+      }
+  },[data,error,isLoading])
 
   return (
    <div>
