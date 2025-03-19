@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import InstagramIcon from '@mui/icons-material/Instagram';
 // import Logo from "@/public/icons/lit_laces.png";
@@ -11,10 +12,24 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { useRouter } from 'next/navigation';
+
 
 const SideNav = ({open,toggleDrawer}:{open:boolean,toggleDrawer:Function}) => {
+  const {isAuthenticated,isAdmin}=useSelector((state:any)=>state.auth)
+  const navigate=useRouter();
 
-    const navLinks=[{item:"Home",link:"/"},{item:"Shop Men",link:"/collections/ShopMen"},{item:"Shop Women",link:"/collections/ShopWomen"},{item:"Shop All",link:"/collections/ShopAll"}];
+    const navLinks=[{item:"Home",link:"/"},{item:"Shop Men",link:"/collections/ShopMen"},{item:"Shop Women",link:"/collections/ShopWomen"},{item:"Shop All",link:"/collections/ShopAll"},{item:isAuthenticated?"Log-Out":"Log-in",link:isAuthenticated?"/":"/login"}];
+
+    const logoutHandler=(text:string)=>{
+      if(text==="/Log-Out")
+      {
+        console.log("log-out")
+      }
+      else
+      navigate.push(text);
+    }
 
     const DrawerList = (
         <Box sx={{ width: {xs:"100vw",sm:400},display:"flex",flexDirection:"column",justifyContent:"space-between",backgroundColor:"#eaeaea",height:'100vh' }} role="presentation" onClick={toggleDrawer(false)}>
@@ -24,11 +39,11 @@ const SideNav = ({open,toggleDrawer}:{open:boolean,toggleDrawer:Function}) => {
           <List className='-mt-[40vh] px-8 text-lg'>
             {navLinks.map((text, index) => (
               <ListItem key={text.item} disablePadding>
-                <Link href={text.link}>
-                <ListItemButton>  
+                {/* <Link href={text.link}> */}
+                <ListItemButton onClick={()=>logoutHandler(text.link)}>  
                   <ListItemText primary={text.item} />
                 </ListItemButton>
-              </Link>
+              {/* </Link> */}
               </ListItem>
             ))}
           </List>

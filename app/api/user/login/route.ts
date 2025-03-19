@@ -32,7 +32,7 @@ export async function POST(req: Request) {
         );
       }
       const response = NextResponse.json(
-        { user, message: "logged-in successfully!" },
+        { user, message: "logged-in successfully!",success:true },
         { status: 200 }
       );
       const cookieOptions = {
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     } catch (error) {
       console.log(error);
       return NextResponse.json(
-        { message: "Unable to login." },
+        { message: "Unable to login.",success:false },
         { status: 500 }
       );
     }

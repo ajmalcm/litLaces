@@ -1,10 +1,7 @@
 import { connectDB } from "@/lib/db/connection";
 import userModel from "@/lib/db/models/user.model";
 import bcrypt from "bcryptjs";
-import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
-
-
 
 export async function POST(req: Request) {
   await connectDB();
@@ -47,7 +44,7 @@ export async function POST(req: Request) {
 
       // Set a cookie with expiration
       const response = NextResponse.json(
-        { user, message: "user registered successfully!" },
+        { user, message: "user registered successfully!",success:true },
         { status: 201 }
       );
       const cookieOptions = {
@@ -63,7 +60,7 @@ export async function POST(req: Request) {
     } catch (error) {
       console.log(error);
       return NextResponse.json(
-        { message: "unable to register user" },
+        { message: "unable to register user",success:false },
         { status: 500 }
       );
     }

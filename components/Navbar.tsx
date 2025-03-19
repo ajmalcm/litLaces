@@ -9,6 +9,7 @@ import Image from 'next/image';
 import SideNav from './SideNav';
 import SearchBar from "@/components/SearchBar";
 import CartDrawer from "@/components/CartDrawer";
+import { useSelector } from 'react-redux';
 
 
 const Navbar = () => {
