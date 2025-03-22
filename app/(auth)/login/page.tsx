@@ -3,13 +3,13 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLoadUserQuery, useLoginUserMutation } from "@/redux/services/userReducers";
 import { toast } from "sonner";
-import { setAdmin, setAuthenticated } from "@/redux/reducers/userSlice";
+import { setAdmin, setAuthenticated, setName } from "@/redux/reducers/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const [loginUser, { isLoading, error,data }] = useLoginUserMutation();
-  const {data:userData} = useLoadUserQuery("");
+  const [loginUser] = useLoginUserMutation();
+  // const {data:userData} = useLoadUserQuery("");
   const [loginDetails, setLoginDetails] = useState({ email: "", password: "" });
   const { email, password } = loginDetails;
   const dispatch=useDispatch();
@@ -22,34 +22,38 @@ export default function Login() {
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await loginUser(loginDetails);
-    if (error) {
-      if ("data" in error) {
-        const errorMessage = (error.data as { message: string })?.message;
-        toast.error(errorMessage);
-      }
-    }
-    if(data)
-          {
-            dispatch(setAuthenticated(true));
-            toast.success(data?.message);
-            // navigate.push("/");
-          }
+   const res= await loginUser(loginDetails);
+   if("data" in res)
+   {
+    dispatch(setAuthenticated(true));
+    dispatch(setAdmin(res.data.isAdmin));
+    dispatch(setName(res.data.name));
+    toast.success(res.data.message);
+    setTimeout(()=>{
+    toast.success(`Welcome ${res.data.user.name} 😎!`);
+    },5000)
+   }
+   if("error" in res)
+   {
+    const errorMessage = res.error && 'data' in res.error ? (res.error.data as { message?: string })?.message || "Login failed" : "Login failed";
+    toast.error(errorMessage);
+   }
+    
   };
 
   useEffect(()=>{
 
-    if(userData)
-      {
-        dispatch(setAuthenticated(userData?.success));
-        dispatch(setAdmin(userData?.isAdmin));
-        // navigate.push("/");
-      }
+    // if(userData)
+    //   {
+    //     dispatch(setAuthenticated(userData?.success));
+    //     dispatch(setAdmin(userData?.isAdmin));
+    //     // navigate.push("/");
+    //   }
 
     if(isAuthenticated)
       navigate.push("/")
 
-  },[userData,isAuthenticated])
+  },[isAuthenticated,navigate])
 
   return (
     <div className="min-h-[70vh] bg-black text-white flex items-center justify-center p-6">

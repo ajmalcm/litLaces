@@ -10,11 +10,13 @@ export async function POST(req: Request) {
     email,
     password,
     confirmpassword,
+    avatar
   }: {
     name: string;
     email: string;
     password: string;
     confirmpassword: string;
+    avatar:string;
   } = await req.json();
     try {
       

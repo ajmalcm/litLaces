@@ -1,9 +1,11 @@
+import { connectDB } from "@/lib/db/connection";
 import userModel from "@/lib/db/models/user.model";
 import { isAuthenticatedUser } from "@/lib/middleware/auth";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
     try {
+        await connectDB();
         const isAuth = await isAuthenticatedUser(req);
 
         if (!isAuth || typeof isAuth !== "object" || !("id" in isAuth)) {

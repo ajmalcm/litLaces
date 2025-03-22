@@ -40,7 +40,7 @@ import { toast } from "sonner";
         toast.success(data?.message);
         console.log(isAuthenticated,isAdmin);
       }
-  },[data,error,isLoading])
+  },[data,error])
 
   return (
    <div>

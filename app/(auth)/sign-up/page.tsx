@@ -1,11 +1,21 @@
 
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useLoadUserQuery, useRegisterUserMutation } from "@/redux/services/userReducers";
+import { toast } from "sonner";
+import { setAdmin, setAuthenticated, setName } from "@/redux/reducers/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 
 export default function Signup() {
   const [avatar, setAvatar] = useState(null);
-  const [signUpDetails,setSighnUpDetails]=useState({name:"",email:"",password:"",confirmpassword:""})
+  const [signUpDetails,setSighnUpDetails]=useState({name:"",email:"",password:"",confirmpassword:""});
+  const dispatch=useDispatch();
+  const navigate=useRouter();
+  // const {data:userData} = useLoadUserQuery("");
+  const {isAuthenticated}=useSelector((state:any)=>state.auth)
+  
 
   const handleAvatarChange = (e:any) => {
     const file = e.target.files[0];
@@ -27,12 +37,46 @@ export default function Signup() {
   }
 
   const { name, email, password, confirmpassword } = signUpDetails;
+  const [registerUser]=useRegisterUserMutation();
+
+  const submitHandler=async (e:React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault();
+    const res=await registerUser({...signUpDetails,avatar});
+  if("data" in res)
+     {
+      dispatch(setAuthenticated(true));
+      dispatch(setAdmin(res.data.isAdmin));
+      dispatch(setName(res.data.name));
+      toast.success(res.data.message);
+      setTimeout(()=>{
+      toast.success(`Welcome ${res.data.user.name} 😎!`);
+      },5000)
+     }
+     if("error" in res)
+     {
+      const errorMessage = res.error && 'data' in res.error ? (res.error.data as { message?: string })?.message || "sign-up failed" : "sign-up failed";
+      toast.error(errorMessage);
+     }
+  }
+
+ useEffect(()=>{
+    // if(userData)
+    //   {
+    //     dispatch(setAuthenticated(userData?.success));
+    //     dispatch(setAdmin(userData?.isAdmin));
+    //     // navigate.push("/");
+    //   }
+
+    if(isAuthenticated)
+      navigate.push("/")
+
+  },[isAuthenticated,navigate])
 
   return (
     <div className="min-h-[70vh] bg-black text-white flex items-center justify-center p-6">
       <div className="max-w-md w-full bg-gray-900 p-8 rounded-xl shadow-lg">
         <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
-        <form >
+        <form onSubmit={submitHandler}>
           <div className="mb-4">
             <label
               htmlFor="name"

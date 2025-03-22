@@ -20,7 +20,10 @@ const SideNav = ({open,toggleDrawer}:{open:boolean,toggleDrawer:Function}) => {
   const {isAuthenticated,isAdmin}=useSelector((state:any)=>state.auth)
   const navigate=useRouter();
 
-    const navLinks=[{item:"Home",link:"/"},{item:"Shop Men",link:"/collections/ShopMen"},{item:"Shop Women",link:"/collections/ShopWomen"},{item:"Shop All",link:"/collections/ShopAll"},{item:isAuthenticated?"Log-Out":"Log-in",link:isAuthenticated?"/":"/login"}];
+    const navLinks=[{item:"Home",link:"/"},{item:"Shop Men",link:"/collections/ShopMen"},{item:"Shop Women",link:"/collections/ShopWomen"},{item:"Shop All",link:"/collections/ShopAll"},{item:isAuthenticated?"Log-Out":"Log-in",link:isAuthenticated?"/":"/login"},
+      // {item:"login ",link:"/login"},{item:"sign-up",link:"/sign-up"}
+      {item:"admin",link:"/admin"}
+    ];
 
     const logoutHandler=(text:string)=>{
       if(text==="/Log-Out")
