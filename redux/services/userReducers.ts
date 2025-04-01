@@ -15,9 +15,10 @@ export const userReducerApi=createApi({
             url:"user/login",
             method:"POST",
             body:credentials
-        })})
+        })}),
+        logoutuser:builder.query({query:()=>"user/logout"}),
     })
 
 })
 
-export const {useLoadUserQuery,useRegisterUserMutation,useLoginUserMutation}=userReducerApi
+export const {useLoadUserQuery,useRegisterUserMutation,useLoginUserMutation,useLogoutuserQuery,useLazyLogoutuserQuery}=userReducerApi
