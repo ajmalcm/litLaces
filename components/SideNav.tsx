@@ -60,9 +60,9 @@ const SideNav = ({
   
       console.log("Updated State:", { isAuthenticated, isAdmin }); // Still might log old values
       navigate.push(text);
-    } catch (err) {
+    } catch (err) {    
       console.error("Logout Error:", err);
-      toast.error("An unexpected error occurred.");
+      toast.error("An unexpected error occurred.");   
     }
   };
   
