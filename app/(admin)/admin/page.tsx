@@ -8,7 +8,6 @@ import PieChart from "@/components/dashboard/PieChart"
 import BarChart from "@/components/dashboard/BarChart"
 import Areachart from "@/components/dashboard/AreaChart"
 import { dashLinks, NewOrders } from "@/utils/temp"
-import Image from "next/image"
 import LatestOrdersCard from "@/components/dashboard/LatestOrdersCard"
 
 const Dashboard = () => {

@@ -13,7 +13,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import { useLazyLogoutuserQuery, useLogoutuserQuery } from "@/redux/services/userReducers";
+import { useLogoutuserMutation } from "@/redux/services/userReducers";
 import { toast } from "sonner";
 import { setAdmin, setAuthenticated } from "@/redux/reducers/userSlice";
 
@@ -26,7 +26,7 @@ const SideNav = ({
 }) => {
   const { isAuthenticated, isAdmin } = useSelector((state: any) => state.auth);
   const navigate = useRouter();
-  const [triggerLogout] = useLazyLogoutuserQuery();
+  const [logoutTrigger] =  useLogoutuserMutation(); // Ensure the API call completes
   const dispatch = useDispatch();
 
   const navLinks = [
@@ -42,20 +42,20 @@ const SideNav = ({
     { item: "admin", link: "/admin" },
   ];
 
-  const logoutHandler = async (text: string) => {
+  const logoutHandler =  async (text: string) => {
     try {
-      const response = await triggerLogout(""); // Ensure the API call completes
-      console.log("Logout Response:", response);
+      const {data,error}=await logoutTrigger("");
+      console.log("Logout Response:", data);
   
-      if (response.error) {
+      if (error) {
         toast.error("Unable to logout now. Try later!");
         return;
       }
   
-      if (response.data) {
+      if (data) {
         dispatch(setAuthenticated(false));
         dispatch(setAdmin(false));
-        toast.success(response.data?.message);
+        toast.success(data?.message);
       }
   
       console.log("Updated State:", { isAuthenticated, isAdmin }); // Still might log old values
@@ -93,7 +93,7 @@ const SideNav = ({
         {navLinks.map((text, index) => (
           <ListItem key={text.item} disablePadding>
             {/* <Link href={text.link}> */}
-            <ListItemButton onClick={() =>text.link!=='/login'? logoutHandler(text.link):handleLogin(text.link)}>
+            <ListItemButton onClick={() =>text.item ==="Log-Out"? logoutHandler(text.link):handleLogin(text.link)}>
               <ListItemText primary={text.item} />
             </ListItemButton>
             {/* </Link> */}

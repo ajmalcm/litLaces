@@ -27,20 +27,25 @@ import { toast } from "sonner";
           // API error (handled response)
           if ('data' in error) {
             const errorMessage = (error.data as { message: string })?.message;
-            console.log(errorMessage);
             toast.error(errorMessage);
           }
         }
       console.log(isAdmin,isAuthenticated);
       if(data)
       {
-        console.log(data?.message);
+        console.log(data);
         dispatch(setAuthenticated(data?.success));
         dispatch(setAdmin(data?.isAdmin));
-        toast.success(data?.message);
-        console.log(isAuthenticated,isAdmin);
       }
-  },[data,error])
+      if(isAuthenticated)
+        {
+        toast.success(data?.message);
+      }else
+      {
+        toast.error("You are not authenticated");
+      }
+      
+  },[data,error,isAuthenticated,isAdmin,error,dispatch]);
 
   return (
    <div>
