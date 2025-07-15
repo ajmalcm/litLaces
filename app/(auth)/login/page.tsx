@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useLoadUserQuery, useLoginUserMutation } from "@/redux/services/userReducers";
+import { useLoginUserMutation } from "@/redux/services/userReducers";
 import { toast } from "sonner";
 import { setAdmin, setAuthenticated, setName } from "@/redux/reducers/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [loginUser] = useLoginUserMutation();
-  // const {data:userData} = useLoadUserQuery("");
   const [loginDetails, setLoginDetails] = useState({ email: "", password: "" });
   const { email, password } = loginDetails;
   const dispatch=useDispatch();
@@ -42,14 +41,6 @@ export default function Login() {
   };
 
   useEffect(()=>{
-
-    // if(userData)
-    //   {
-    //     dispatch(setAuthenticated(userData?.success));
-    //     dispatch(setAdmin(userData?.isAdmin));
-    //     // navigate.push("/");
-    //   }
-
     if(isAuthenticated)
       navigate.push("/")
 

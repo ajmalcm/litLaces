@@ -18,35 +18,28 @@ import { toast } from "sonner";
     const {isLoading,data,error} = useLoadUserQuery("");
     const {isAdmin,isAuthenticated}=useSelector((state: any)=>state.auth);
     const dispatch=useDispatch();
-    useEffect(()=>{
-      if(isLoading)
-        console.log("loading");
+    useEffect(() => {
+      if (isLoading) console.log("loading");
 
       if (error) {
-       
-          // API error (handled response)
-          if ('data' in error) {
-            const errorMessage = (error.data as { message: string })?.message;
-            toast.error(errorMessage);
-          }
+        if ('data' in error) {
+          const errorMessage = (error.data as { message: string })?.message;
+          toast.error(errorMessage);
         }
-      console.log(isAdmin,isAuthenticated);
-      if(data)
-      {
-        console.log(data);
-        dispatch(setAuthenticated(data?.success));
-        dispatch(setAdmin(data?.isAdmin));
+        dispatch(setAuthenticated(false));
+        dispatch(setAdmin(false));
+        return;
       }
-      if(isAuthenticated)
-        {
-        toast.success(data?.message);
-      }else
-      {
-        toast.error("You are not authenticated");
-      }
-      
-  },[data,error,isAuthenticated,isAdmin,error,dispatch]);
 
+      if (data && data.success) {
+        dispatch(setAuthenticated(true));
+        dispatch(setAdmin(data.isAdmin));
+        toast.success(data.message);
+      } else {
+        dispatch(setAuthenticated(false));
+        dispatch(setAdmin(false));
+      }
+    }, [data, error, dispatch, isLoading,isAdmin, isAuthenticated]);
   return (
    <div>
     {/* bannerVideo */}

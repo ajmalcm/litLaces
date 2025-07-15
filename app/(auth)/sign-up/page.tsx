@@ -2,7 +2,7 @@
 'use client'
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useLoadUserQuery, useRegisterUserMutation } from "@/redux/services/userReducers";
+import { useRegisterUserMutation } from "@/redux/services/userReducers";
 import { toast } from "sonner";
 import { setAdmin, setAuthenticated, setName } from "@/redux/reducers/userSlice";
 import { useDispatch, useSelector } from "react-redux";

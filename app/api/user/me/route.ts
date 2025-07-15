@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
         const isAuth = await isAuthenticatedUser(req);
 
         if (!isAuth || typeof isAuth !== "object" || !("id" in isAuth)) {
-            return NextResponse.json({ message: "Please login to access this resource.",success:false }, { status: 401 });
+            return NextResponse.json({ message: "Please login to access user data.",success:false }, { status: 401 });
         }
 
         const user = await userModel.findById(isAuth.id);
