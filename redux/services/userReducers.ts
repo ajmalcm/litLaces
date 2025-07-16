@@ -3,7 +3,7 @@ import {createApi,fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 
 export const userReducerApi=createApi({
     reducerPath:"user",
-    baseQuery:fetchBaseQuery({baseUrl:"http://localhost:3000/api/"}),
+    baseQuery:fetchBaseQuery({baseUrl:"http://localhost:3000/api/",credentials:"include"}),
     endpoints:(builder)=>({
         loadUser:builder.query({
             query:()=>"user/me",
@@ -22,8 +22,11 @@ export const userReducerApi=createApi({
             keepUnusedDataFor:0, // disables caching
         })}),
         logoutuser:builder.mutation({query:()=>"user/logout"}),
+        getProducts:builder.query({
+            query:()=>'products',
+        })
     })
 
 })
 
-export const {useLoadUserQuery,useRegisterUserMutation,useLoginUserMutation,useLogoutuserMutation}=userReducerApi
+export const {useLoadUserQuery,useRegisterUserMutation,useLoginUserMutation,useLogoutuserMutation,useGetProductsQuery}=userReducerApi

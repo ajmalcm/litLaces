@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -7,7 +7,7 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid2";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import { ProductsArray } from "@/utils/temp";
+// import { ProductsArray } from "@/utils/temp";
 import ProductCard from "@/components/ProductCard";
 import { alpha } from "@mui/material/styles";
 import Button from "@mui/material/Button";
@@ -16,10 +16,15 @@ import MenuItem from "@mui/material/MenuItem";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { TextField } from "@mui/material";
 import Link from "next/link";
+import { useGetProductsQuery } from "@/redux/services/userReducers";
+import { set } from "mongoose";
+import CollectionSkeletonLoader from "@/components/loaders/CollectionSkeletonLoader";
 
 const page = () => {
   const { id } = useParams();
   const [page, setPage] = useState(1);
+  const {data,error,isLoading}=useGetProductsQuery("");
+  const [productsArray,setProductsArray] = useState([]);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
@@ -34,6 +39,17 @@ const page = () => {
       backgroundColor: "#1A2027",
     }),
   }));
+
+  useEffect(()=>{
+    if(data && data?.sneakers)
+    {
+      setProductsArray(data.sneakers);
+    }
+    if(error)
+    {
+      console.error("Error fetching products:", error);
+    }
+  },[data,error]);
 
   const StyledMenu = styled((props: MenuProps) => (
     <Menu
@@ -85,7 +101,7 @@ const page = () => {
     setAnchorEl(null);
   };
 
-  return (
+  return isLoading ? <CollectionSkeletonLoader/>: (
     <div className="text-white px-4 py-4 md:px-16 md:py-8 flex flex-col gap-3">
       <Box
         sx={{ flexGrow: 1, width: { xs: "100%", md: "90%", margin: "0 auto" } }}
@@ -147,15 +163,15 @@ const page = () => {
           spacing={{ xs: 2, md: 3 }}
           columns={{ xs: 4, sm: 8, md: 12 }}
         >
-          {ProductsArray.map((item, index) => (
+          {productsArray.map((item:any , index:any) => (
             <Grid key={index} size={{ xs: 2, sm: 4, md: 3 }}>
               <Item>
-                <Link href={`/products/${item.productName}`}>
+                <Link href={`/products/${item.name}`}>
                 <ProductCard
-                  src={item.img}
+                  src={item.images[0].url}
                   alt={index}
                   price={item.price}
-                  productName={item.productName}
+                  productName={item.name}
                 />
                 </Link>
               </Item>

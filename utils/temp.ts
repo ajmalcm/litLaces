@@ -370,3 +370,122 @@ export const mockOrders = [
     items: 7,
   },
 ];
+
+
+
+export const ProductsArray2 = [
+  {
+    name: "Adidas Samba",
+    brand: "Adidas",
+    category: "Men",
+    gender: "unisex",
+    sizes: [
+      { size: 36, stock: 10 },
+      { size: 37, stock: 8 },
+      { size: 38, stock: 5 },
+    ],
+    price: 2899,
+    images: [
+      { public_id: "adidas_samba_1", url: "https://i.pinimg.com/1200x/3e/6d/22/3e6d2247b5eff705816080c840a3a5e9.jpg" },
+      { public_id: "adidas_samba_2", url: "https://i.pinimg.com/1200x/09/c5/d4/09c5d40372ce3ca38953a449f922a8f2.jpg" },
+      { public_id: "adidas_samba_3", url: "https://i.pinimg.com/1200x/30/3f/f9/303ff971f57a7dbc37b3b776da383876.jpg" },
+      { public_id: "adidas_samba_4", url: "https://i.pinimg.com/736x/32/47/e6/3247e6d6618e8a15dbc18ff54f543af0.jpg" },
+    ],
+    description: "Classic Adidas Samba sneakers for everyday wear.",
+  },
+  {
+    name: "Nike Dunks",
+    brand: "Nike",
+    category: "Women",
+    gender: "female",
+    sizes: [
+      { size: 36, stock: 7 },
+      { size: 37, stock: 6 },
+      { size: 38, stock: 4 },
+    ],
+    price: 3199,
+    images: [
+      { public_id: "nike_dunks_1", url: "https://i.pinimg.com/736x/8c/d7/ab/8cd7abb870992659c049735ec46af791.jpg" },
+      { public_id: "nike_dunks_2", url: "https://i.pinimg.com/736x/3f/e0/ff/3fe0ff6c30f1cd41977a66b276a664d6.jpg" },
+      { public_id: "nike_dunks_3", url: "https://i.pinimg.com/1200x/3e/6d/22/3e6d2247b5eff705816080c840a3a5e9.jpg" },
+      { public_id: "nike_dunks_4", url: "https://i.pinimg.com/1200x/09/c5/d4/09c5d40372ce3ca38953a449f922a8f2.jpg" },
+    ],
+    description: "Nike Dunks, iconic streetwear sneakers.",
+  },
+  {
+    name: "Puma RS-X",
+    brand: "Puma",
+    category: "Men",
+    gender: "male",
+    sizes: [
+      { size: 39, stock: 12 },
+      { size: 40, stock: 9 },
+      { size: 41, stock: 3 },
+    ],
+    price: 2799,
+    images: [
+      { public_id: "puma_rsx_1", url: "https://i.pinimg.com/1200x/30/3f/f9/303ff971f57a7dbc37b3b776da383876.jpg" },
+      { public_id: "puma_rsx_2", url: "https://i.pinimg.com/736x/32/47/e6/3247e6d6618e8a15dbc18ff54f543af0.jpg" },
+      { public_id: "puma_rsx_3", url: "https://i.pinimg.com/736x/8c/d7/ab/8cd7abb870992659c049735ec46af791.jpg" },
+      { public_id: "puma_rsx_4", url: "https://i.pinimg.com/736x/3f/e0/ff/3fe0ff6c30f1cd41977a66b276a664d6.jpg" },
+    ],
+    description: "Puma RS-X, bold and comfortable for everyday style.",
+  },
+  {
+    name: "Vans Old Skool",
+    brand: "Vans",
+    category: "Unisex",
+    gender: "unisex",
+    sizes: [
+      { size: 36, stock: 5 },
+      { size: 37, stock: 7 },
+      { size: 38, stock: 2 },
+    ],
+    price: 2499,
+    images: [
+      { public_id: "vans_oldskool_1", url: "https://i.pinimg.com/736x/32/47/e6/3247e6d6618e8a15dbc18ff54f543af0.jpg" },
+      { public_id: "vans_oldskool_2", url: "https://i.pinimg.com/736x/8c/d7/ab/8cd7abb870992659c049735ec46af791.jpg" },
+      { public_id: "vans_oldskool_3", url: "https://i.pinimg.com/736x/3f/e0/ff/3fe0ff6c30f1cd41977a66b276a664d6.jpg" },
+      { public_id: "vans_oldskool_4", url: "https://i.pinimg.com/1200x/3e/6d/22/3e6d2247b5eff705816080c840a3a5e9.jpg" },
+    ],
+    description: "Vans Old Skool, classic skate shoes for all.",
+  },
+  {
+    name: "Crocs Classic Clog",
+    brand: "Crocs",
+    category: "Women",
+    gender: "female",
+    sizes: [
+      { size: 36, stock: 6 },
+      { size: 37, stock: 5 },
+      { size: 38, stock: 3 },
+    ],
+    price: 1999,
+    images: [
+      { public_id: "crocs_clog_1", url: "https://i.pinimg.com/1200x/09/c5/d4/09c5d40372ce3ca38953a449f922a8f2.jpg" },
+      { public_id: "crocs_clog_2", url: "https://i.pinimg.com/1200x/30/3f/f9/303ff971f57a7dbc37b3b776da383876.jpg" },
+      { public_id: "crocs_clog_3", url: "https://i.pinimg.com/736x/32/47/e6/3247e6d6618e8a15dbc18ff54f543af0.jpg" },
+      { public_id: "crocs_clog_4", url: "https://i.pinimg.com/736x/8c/d7/ab/8cd7abb870992659c049735ec46af791.jpg" },
+    ],
+    description: "Crocs Classic Clog, comfort and style for everyone.",
+  },
+  {
+    name: "Asics Gel-Lyte",
+    brand: "Asics",
+    category: "Men",
+    gender: "male",
+    sizes: [
+      { size: 40, stock: 8 },
+      { size: 41, stock: 6 },
+      { size: 42, stock: 4 },
+    ],
+    price: 3099,
+    images: [
+      { public_id: "asics_gellyte_1", url: "https://i.pinimg.com/1200x/3e/6d/22/3e6d2247b5eff705816080c840a3a5e9.jpg" },
+      { public_id: "asics_gellyte_2", url: "https://i.pinimg.com/736x/3f/e0/ff/3fe0ff6c30f1cd41977a66b276a664d6.jpg" },
+      { public_id: "asics_gellyte_3", url: "https://i.pinimg.com/1200x/09/c5/d4/09c5d40372ce3ca38953a449f922a8f2.jpg" },
+      { public_id: "asics_gellyte_4", url: "https://i.pinimg.com/736x/32/47/e6/3247e6d6618e8a15dbc18ff54f543af0.jpg" },
+    ],
+    description: "Asics Gel-Lyte, performance running shoes.",
+  },
+];

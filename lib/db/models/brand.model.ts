@@ -3,7 +3,7 @@ import mongoose,{Schema,Document} from "mongoose";
 interface Brand extends Document{
     name:string,
     logo?:string,
-    craetedAt:Date
+    createdAt:Date
 }
 
 const BrandSchema =new Schema<Brand>({

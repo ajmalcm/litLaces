@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
     const response = NextResponse.json({ message: "Logged out successfully" });
-    response.cookies.set('userToken', '', { httpOnly: true, path: '/', expires: new Date(0) });
+    // Remove the cookie by setting it to expire in the past
+    response.cookies.set("userToken", "", { expires: new Date(0), path: "/" });
     return response;
 }

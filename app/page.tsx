@@ -20,7 +20,6 @@ import { toast } from "sonner";
     const dispatch=useDispatch();
     useEffect(() => {
       if (isLoading) console.log("loading");
-
       if (error) {
         if ('data' in error) {
           const errorMessage = (error.data as { message: string })?.message;
@@ -39,7 +38,7 @@ import { toast } from "sonner";
         dispatch(setAuthenticated(false));
         dispatch(setAdmin(false));
       }
-    }, [data, error, dispatch, isLoading,isAdmin, isAuthenticated]);
+    }, [ error, dispatch, isLoading,isAdmin, isAuthenticated]);
   return (
    <div>
     {/* bannerVideo */}

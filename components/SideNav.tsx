@@ -58,8 +58,7 @@ const SideNav = ({
         toast.success(data?.message);
       }
   
-      console.log("Updated State:", { isAuthenticated, isAdmin }); // Still might log old values
-      navigate.push(text);
+      window.location.href = text; // Redirect to the specified link
     } catch (err) {    
       console.error("Logout Error:", err);
       toast.error("An unexpected error occurred.");   

@@ -6,7 +6,7 @@ const ProductCard = ({ src, alt, productName, price }: { src: string | any; alt:
     <div className="flex flex-col gap-2 font-mono bg-black">
       <div className="relative w-full aspect-square overflow-hidden rounded-lg">
         {/* Image cropping and centering */}
-        <Image src={src} alt={alt} layout="fill" objectFit="cover" />
+        <img src={src} alt={alt} className='object-cover' />
       </div>
       <p className="text-sm font-bold text-white flex">{productName}</p>
       <div className="flex items-center gap-8">
