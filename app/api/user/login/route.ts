@@ -2,9 +2,6 @@ import { connectDB } from "@/lib/db/connection";
 import { NextResponse } from "next/server";
 import userModel from "@/lib/db/models/user.model";
 
-
-
-
 //register
 export async function POST(req: Request) {
   try {
