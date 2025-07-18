@@ -156,7 +156,7 @@ const page = () => {
             </div>
           </div>
           <div className="font-extralight tracking-widest">
-            230 Products
+            {`${data?.totalCount} Products`}
           </div>
           </div>
         </Grid>
