@@ -31,8 +31,8 @@ const SideNav = ({
 
   const navLinks = [
     { item: "Home", link: "/" },
-    { item: "Shop Men", link: "/collections/men" },
-    { item: "Shop Women", link: "/collections/women" },
+    { item: "Shop Men", link: "/collections/Men" },
+    { item: "Shop Women", link: "/collections/Women" },
     { item: "Shop All", link: "/collections/all" },
     {
       item: isAuthenticated ? "Log-Out" : "Log-in",

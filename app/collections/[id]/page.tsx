@@ -23,7 +23,8 @@ import CollectionSkeletonLoader from "@/components/loaders/CollectionSkeletonLoa
 const page = () => {
   const { id } = useParams();
   const [page, setPage] = useState(1);
-  const {data,error,isLoading}=useGetProductsQuery("");
+  const {data,error,isLoading}=useGetProductsQuery({id,keyword:"",page});
+  console.log("Data from API:", data);
   const [productsArray,setProductsArray] = useState([]);
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -43,13 +44,14 @@ const page = () => {
   useEffect(()=>{
     if(data && data?.sneakers)
     {
-      setProductsArray(data.sneakers);
+      setProductsArray(data?.sneakers);
+      console.log("Products Array:", data?.sneakers);
     }
     if(error)
     {
       console.error("Error fetching products:", error);
     }
-  },[data,error]);
+  },[data,error,productsArray]);
 
   const StyledMenu = styled((props: MenuProps) => (
     <Menu
@@ -186,7 +188,7 @@ const page = () => {
         justifyContent="center"
       >
         <Pagination
-          count={10}
+          count={Math.ceil(data?.totalCount / 10) || 1}
           page={page}
           onChange={handleChange}
           variant="outlined"
