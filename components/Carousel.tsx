@@ -34,12 +34,12 @@ const CustomCarousel = ({ product }: { product: any[] }) => {
                             key={index}
                             className="min-w-full aspect-square relative"
                         >
-                               <Image
-                                src={item}
+                               <img
+                                src={item.url}
                                 alt={`Slide ${index}`}
-                                layout='fill'
-                                objectFit='cover'
-                                className="rounded-md"
+                                // layout='fill'
+                                // objectFit='cover'
+                                className="rounded-md object-cover w-full h-full"
                                 // sizes="(max-width: 768px) 95vw, 45vw"
                                 // priority={index === 0} // Load the first image eagerly for better performance
                             />
@@ -75,13 +75,12 @@ const CustomCarousel = ({ product }: { product: any[] }) => {
                     }`}
                     onClick={() => goToSlide(index)}
                 >
-                    <Image
-                        src={item}
+                    <img
+                        src={item.url}
                         alt={`Thumbnail ${index}`}
                         width={64} // Thumbnail size
                         height={64}
                         className="object-cover w-full h-full"
-                        priority={index===0}
                     />
                 </button>
             ))}

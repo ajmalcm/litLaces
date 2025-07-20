@@ -32,9 +32,13 @@ export const userReducerApi=createApi({
                 if(param.length>0) url+=`?${param.join("&")}`;
                 return url;
             },
+        }),
+        getProductDetails:builder.query({
+            query:(id)=>`products/details/${id}`,
+            keepUnusedDataFor:0, // disables caching
         })
     })
 
 })
 
-export const {useLoadUserQuery,useRegisterUserMutation,useLoginUserMutation,useLogoutuserMutation,useGetProductsQuery}=userReducerApi
+export const {useLoadUserQuery,useRegisterUserMutation,useLoginUserMutation,useLogoutuserMutation,useGetProductsQuery,useGetProductDetailsQuery}=userReducerApi

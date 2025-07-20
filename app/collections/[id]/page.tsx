@@ -17,7 +17,6 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { TextField } from "@mui/material";
 import Link from "next/link";
 import { useGetProductsQuery } from "@/redux/services/userReducers";
-import { set } from "mongoose";
 import CollectionSkeletonLoader from "@/components/loaders/CollectionSkeletonLoader";
 
 const page = () => {
@@ -168,7 +167,7 @@ const page = () => {
           {productsArray.map((item:any , index:any) => (
             <Grid key={index} size={{ xs: 2, sm: 4, md: 3 }}>
               <Item>
-                <Link href={`/products/${item.name}`}>
+                <Link href={`/products/${item._id}`}>
                 <ProductCard
                   src={item.images[0].url}
                   alt={index}

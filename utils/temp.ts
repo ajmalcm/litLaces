@@ -21,11 +21,11 @@ import PeopleIcon from "@mui/icons-material/People";
 
 
 export const BrandItems = [
-    { name: "adidas", logo: Adidas,link:'/collections/adidas'},
-    { name: "puma", logo: Puma,link:'/collections/puma'},
-    { name: "nike", logo: Nike,link:'/collections/nike'},
-    { name: "nb", logo: Nb,link:'/collections/nb'},
-    { name: "crocs", logo: Crocs,link:'/collections/crocs'},
+    { name: "adidas", logo: Adidas,link:'/collections/Adidas'},
+    { name: "puma", logo: Puma,link:'/collections/Puma'},
+    { name: "nike", logo: Nike,link:'/collections/Nike'},
+    { name: "nb", logo: Nb,link:'/collections/Vans'},
+    { name: "crocs", logo: Crocs,link:'/collections/Crocs'},
   ];
 
 export const ProductsArray =[

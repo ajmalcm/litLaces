@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import EmailSection from "@/components/EmailSection";
 import Box from "@mui/material/Box";
@@ -11,9 +11,36 @@ import ProductCard from "@/components/ProductCard";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import CarouselComponent from "@/components/Carousel";
 import ShippingAccordion from "@/components/ShippingAccordion";
+import { useGetProductDetailsQuery } from "@/redux/services/userReducers";
 
 const page = () => {
   const { id } = useParams();
+  type ProductType = {
+    name: string;
+    images: { url: string }[];
+    price: number;
+    sizes: [{_id:string, size:number,stock:number}];
+    // add other fields as needed
+  };
+  
+  const [product, setProduct] = useState<ProductType | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([]);
+  const sizeVariants: Record<string, number> = {"39":5,"40":6,"41": 7, "42": 8, "43": 9, "44": 10}; // Example size mapping
+
+  const {data,error,isLoading}=useGetProductDetailsQuery(id);
+
+  useEffect(()=>{
+    if(data && data.product) {
+      setProduct(data.product);
+      setRelatedProducts(data.relatedProducts);
+      console.log("Product Data:", data.product);
+      console.log("Related Products:", data.relatedProducts);
+    }
+    if(error) {
+      console.error("Error fetching product details:", error);
+    }
+  },[data,error])
+
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: "#fff",
     ...theme.typography.body2,
@@ -31,23 +58,30 @@ const page = () => {
       {/* top */}
       <div className="flex flex-col lg:flex-row text-white px-4 py-4 md:px-28 md:py-8 justify-center md:items-center gap-2 md:gap-16">
         <div className="md:flex-[0.6]">
-          <CarouselComponent product={productImgs} />
+          <CarouselComponent product={product?.images || []} />
         </div>
         {/* topright */}
         <div className="flex flex-col gap-4 md:gap-2 cursor-pointer">
           <p className="text-[10px] tracking-widest text-slate-300 font-mono">LIT LACES</p>
-          <p className="text-3xl md:text-4xl  font-sans font-extrabold">Nike airmax 90 Travis Scott</p>
+          <p className="text-3xl md:text-4xl  font-sans font-extrabold">{product?.name}</p>
           <p className="text-white font-sans flex gap-4 text-md">
-            <s className="text-slate-300 font-extralight">Rs. 2,899.00</s> Rs. 2,599.00
+            <s className="text-slate-300 font-extralight">Rs. {Number(product?.price)+300}</s> Rs. {product?.price}
           </p>
           <p className="text-[12px] tracking-widest text-slate-300 font-mono"><u>Shipping</u> calculated at checkout.</p>
           <div className="flex flex-col gap-2">
             <p className="text-[13px] text-slate-300 font-mono font-bold">SIZE</p>
             <select className="bg-black py-3 px-4 rounded-lg border-[1px] border-gray-400 text-sm md:max-w-[200px]">
-              <option>41 EU or 7 UK</option>
+              {
+                product?.sizes?.map((sizeObj : any, index) => (
+                  <option key={index} value={sizeObj.size}>
+                    {sizeObj.size} EU or {sizeVariants[String(sizeObj.size)] ? `${sizeVariants[String(sizeObj.size)]} UK` : "N/A"}
+                  </option>
+                ))
+              }
+              {/* <option>41 EU or 7 UK</option>
               <option>42 EU or 8 UK</option>
               <option>43 EU or 9 UK</option>
-              <option>44 EU or 10 UK</option>
+              <option>44 EU or 10 UK</option> */}
             </select>
           </div>
           <div className="flex flex-col gap-2">
@@ -82,15 +116,15 @@ const page = () => {
             spacing={{ xs: 2, md: 3 }}
             columns={{ xs: 4, sm: 8, md: 12 }}
           >
-            {ProductsArray.slice(0, 4).map((item, index) => (
+            {relatedProducts.map((item, index) => (
               <Grid key={index} size={{ xs: 2, sm: 4, md: 3 }}>
                 <Item>
-                  <Link href={`/products/${item.productName}`}>
+                  <Link href={`/products/${item.name}`}>
                     <ProductCard
-                      src={item.img}
-                      alt={index}
+                      src={item.images[0].url}
+                      alt={item.name}
                       price={item.price}
-                      productName={item.productName}
+                      productName={item.name}
                     />
                   </Link>
                 </Item>

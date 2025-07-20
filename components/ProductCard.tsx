@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import React from 'react';
 
 const ProductCard = ({ src, alt, productName, price }: { src: string | any; alt: string | any; productName: string; price: any }) => {
