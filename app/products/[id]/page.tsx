@@ -5,17 +5,20 @@ import EmailSection from "@/components/EmailSection";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid2";
-import { productImgs, ProductsArray } from "@/utils/temp";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import CarouselComponent from "@/components/Carousel";
 import ShippingAccordion from "@/components/ShippingAccordion";
 import { useGetProductDetailsQuery } from "@/redux/services/userReducers";
+import ProductDetailsLoader from "@/components/loaders/ProductDetailsLoader";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import Head from "next/head";
 
 const page = () => {
   const { id } = useParams();
   type ProductType = {
+    _id:String,
     name: string;
     images: { url: string }[];
     price: number;
@@ -28,6 +31,10 @@ const page = () => {
   const sizeVariants: Record<string, number> = {"39":5,"40":6,"41": 7, "42": 8, "43": 9, "44": 10}; // Example size mapping
 
   const {data,error,isLoading}=useGetProductDetailsQuery(id);
+  const imageUrl =
+    data?.product?.images?.[0]?.url; // fallback if image missing
+
+  const productUrl = window.location.href || ""; // fallback if URL missing
 
   useEffect(()=>{
     if(data && data.product) {
@@ -53,7 +60,25 @@ const page = () => {
   }));
 
 
-  return (
+  return isLoading?<ProductDetailsLoader/>: (
+    <>
+      <Head>
+        <title>{data?.product?.name} – LIT LACES</title>
+        <meta name="description" content={data?.product?.description || 'Check out this product on LIT LACES'} />
+
+        {/* Open Graph Meta Tags */}
+        <meta property="og:title" content={data?.product?.name} />
+        <meta property="og:description" content={data?.product?.description || 'Check out this product on LIT LACES'} />
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:url" content={productUrl} />
+        <meta property="og:type" content="product" />
+
+        {/* Twitter Card (optional but useful) */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={data?.product?.name} />
+        <meta name="twitter:description" content={data?.product?.description || 'Check out this product on LIT LACES'} />
+        <meta name="twitter:image" content={imageUrl} />
+      </Head>
     <div>
       {/* top */}
       <div className="flex flex-col lg:flex-row text-white px-4 py-4 md:px-28 md:py-8 justify-center md:items-center gap-2 md:gap-16">
@@ -93,7 +118,7 @@ const page = () => {
             </div>
           </div>
           <button className="p-3 border-[1px] border-gray-400 font-mono rounded-xl bg-white text-black font-bold">Add to cart</button>
-          <button className="p-3 border-[1px] border-gray-400 font-mono rounded-md bg-green-500 font-bold">ORDER ON WHATSAPP</button>
+          <WhatsAppButton productName={product?.name || "this product"} />
           <ShippingAccordion/>
         </div>
       </div>
@@ -119,7 +144,7 @@ const page = () => {
             {relatedProducts.map((item, index) => (
               <Grid key={index} size={{ xs: 2, sm: 4, md: 3 }}>
                 <Item>
-                  <Link href={`/products/${item.name}`}>
+                  <Link href={`/products/${item._id}`}>
                     <ProductCard
                       src={item.images[0].url}
                       alt={item.name}
@@ -138,6 +163,7 @@ const page = () => {
         <EmailSection />
       </div>
     </div>
+    </>
   );
 };
 

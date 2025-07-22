@@ -1,6 +1,6 @@
 import React from "react";
 
-const SkeletonLoader = () => {
+const ProductDetailsLoader = () => {
   return (
     <div className="animate-pulse">
       {/* Top Section */}
@@ -58,4 +58,4 @@ const SkeletonLoader = () => {
   );
 };
 
-export default SkeletonLoader;
+export default ProductDetailsLoader;
