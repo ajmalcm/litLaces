@@ -5,7 +5,6 @@ import EmailSection from "@/components/EmailSection";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid2";
-import { productImgs, ProductsArray } from "@/utils/temp";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import { experimentalStyled as styled } from "@mui/material/styles";
@@ -15,7 +14,7 @@ import { useGetProductDetailsQuery } from "@/redux/services/userReducers";
 import ProductDetailsLoader from "@/components/loaders/ProductDetailsLoader";
 import WhatsAppButton from "@/components/WhatsAppButton";
 
-const page = () => {
+const ProductDetails = () => {
   const { id } = useParams();
   type ProductType = {
     _id:String,
@@ -57,6 +56,7 @@ const page = () => {
 
 
   return isLoading?<ProductDetailsLoader/>: (
+     
     <div>
       {/* top */}
       <div className="flex flex-col lg:flex-row text-white px-4 py-4 md:px-28 md:py-8 justify-center md:items-center gap-2 md:gap-16">
@@ -144,4 +144,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ProductDetails;
