@@ -3,7 +3,7 @@ import {createApi,fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 
 export const userReducerApi=createApi({
     reducerPath:"user",
-    baseQuery:fetchBaseQuery({baseUrl:"http://localhost:3000/api/",credentials:"include"}),
+    baseQuery:fetchBaseQuery({baseUrl:"https://lit-laces.vercel.app",credentials:"include"}),
     endpoints:(builder)=>({
         loadUser:builder.query({
             query:()=>"user/me",
