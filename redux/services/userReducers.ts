@@ -39,9 +39,15 @@ export const userReducerApi=createApi({
         getProductDetails:builder.query({
             query:(id)=>`products/details/${id}`,
             keepUnusedDataFor:0, // disables caching
+        }),
+        getAdminAllProducts:builder.query({
+            query:()=>"admin/allProducts",
+        }),
+        getAdminAllUsers:builder.query({
+            query:()=>"admin/allUsers",
         })
     })
 
 })
 
-export const {useLoadUserQuery,useRegisterUserMutation,useLoginUserMutation,useLogoutuserMutation,useGetProductsQuery,useGetProductDetailsQuery}=userReducerApi
+export const {useLoadUserQuery,useRegisterUserMutation,useLoginUserMutation,useLogoutuserMutation,useGetProductsQuery,useGetProductDetailsQuery,useGetAdminAllProductsQuery,useGetAdminAllUsersQuery}=userReducerApi

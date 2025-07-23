@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   Box,
@@ -10,52 +10,72 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import { mockUsers } from "@/utils/temp";
-import Image from "next/image";
+import { useGetAdminAllUsersQuery } from "@/redux/services/userReducers";
+
+type UserType = {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  avatar: {
+    public_id: string;
+    url: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};
 
 const AllUsers = () => {
-  const [users, setUsers] = useState(mockUsers);
+  const { data = [], isLoading, error } = useGetAdminAllUsersQuery("");
   const [search, setSearch] = useState("");
-
-  // Responsive breakpoint
+  const [deletedIds, setDeletedIds] = useState<string[]>([]);
   const isMobile = useMediaQuery("(max-width:600px)");
 
-  // Filter Logic
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter out deleted users
+  const filteredUsers = useMemo(() => {
+    return data
+      .filter((user: UserType) =>
+        user.name.toLowerCase().includes(search.toLowerCase())
+      )
+      .filter((user: UserType) => !deletedIds.includes(user._id))
+      .map((user: UserType) => ({ ...user, id: user._id }));
+  }, [data, search, deletedIds]);
 
   // Delete Handler
-  const handleDelete = (id: any) => {
+  const handleDelete = (id: string) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this user?"
     );
     if (confirmDelete) {
-      setUsers((prev) => prev.filter((user) => user.id !== id));
+      setDeletedIds((prev) => [...prev, id]);
     }
   };
 
   // DataGrid Columns
   const columns = [
     {
-        field: "avatar",
-        headerName: "Avatar",
-        width: 80,
-        renderCell: (params: any) => (
-          <Image
-            src={params.value}
-            alt={params.row.name}
-            style={{
-              width: "40px",
-              height: "40px",
-              objectFit: "cover",
-              borderRadius: "50%",
-            }}
-          />
-        ),
-        sortable: false,
-      },
-    { field: "id", headerName: "ID", width: 80 },
+      field: "avatar",
+      headerName: "Avatar",
+      width: 80,
+      renderCell: (params: any) => (
+        <img
+          src={
+            params.value?.url ||
+            "https://i.pinimg.com/1200x/0e/fb/61/0efb6114dea714848e0bb9fdfae651aa.jpg"
+          }
+          alt={params.row.name}
+          style={{
+            width: "40px",
+            height: "40px",
+            objectFit: "cover",
+            borderRadius: "50%",
+          }}
+        />
+      ),
+      sortable: false,
+    },
+    { field: "_id", headerName: "ID", width: 80 },
     { field: "name", headerName: "Name", flex: 1 },
     { field: "email", headerName: "Email", width: 250 },
     {
@@ -63,7 +83,7 @@ const AllUsers = () => {
       headerName: "Role",
       width: 150,
       renderCell: (params: any) => (
-        <span style={{ color: params.value === "Admin" ? "green" : "blue" }}>
+        <span style={{ color: params.value === "admin" ? "green" : "blue" }}>
           {params.value}
         </span>
       ),
@@ -78,8 +98,8 @@ const AllUsers = () => {
           <IconButton
             size="small"
             sx={{
-              color: "#007BFF", // Blue color for Edit
-              "&:hover": { color: "#0056b3" }, // Darker blue on hover
+              color: "#007BFF",
+              "&:hover": { color: "#0056b3" },
             }}
             onClick={() => alert(`Edit User ${params.row.id}`)}
           >
@@ -88,8 +108,8 @@ const AllUsers = () => {
           <IconButton
             size="small"
             sx={{
-              color: "#0056b3", // Blue color for Delete
-              "&:hover": { color: "#004080" }, // Darker blue on hover
+              color: "#0056b3",
+              "&:hover": { color: "#004080" },
             }}
             onClick={() => handleDelete(params.row.id)}
           >
@@ -99,6 +119,9 @@ const AllUsers = () => {
       ),
     },
   ];
+
+  if (isLoading) return <Typography>Loading...</Typography>;
+  if (error) return <Typography color="error">Error loading users.</Typography>;
 
   return (
     <Box
@@ -111,7 +134,6 @@ const AllUsers = () => {
         maxWidth: "100vw",
       }}
     >
-      {/* Header */}
       <Typography
         variant="h4"
         component="h1"
@@ -120,8 +142,6 @@ const AllUsers = () => {
       >
         All Users
       </Typography>
-
-      {/* Filters */}
       <Box sx={{ mb: 4 }}>
         <TextField
           label="Search by Name"
@@ -142,8 +162,6 @@ const AllUsers = () => {
           }}
         />
       </Box>
-
-      {/* DataGrid */}
       <Box
         sx={{
           height: 500,
