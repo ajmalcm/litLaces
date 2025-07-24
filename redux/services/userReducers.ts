@@ -26,11 +26,15 @@ export const userReducerApi=createApi({
         })}),
         logoutuser:builder.mutation({query:()=>"user/logout"}),
         getProducts:builder.query({
-            query:({id="",keyword="",page=1})=>{
+            query:({id="",keyword="",page=1,gte=0,lte=10000})=>{
                 let url=`products`;
                 if(id) url+=`/${id}`;
                 const param=[];
                 if(keyword) param.push(`keyword=${encodeURIComponent(keyword)}`);
+                if(gte || lte) {
+                    param.push(`gte=${gte}`);
+                    param.push(`lte=${lte}`);
+                }
                 if(page) param.push(`page=${page}`);
                 if(param.length>0) url+=`?${param.join("&")}`;
                 return url;
