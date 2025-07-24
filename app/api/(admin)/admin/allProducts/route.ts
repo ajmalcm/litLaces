@@ -1,8 +1,8 @@
 import sneakerModel from "@/lib/db/models/sneaker.model";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/connection";
 
-export const GET = async (res: NextResponse) => {
+export const GET = async (req: NextRequest) => {
   try {
     await connectDB();
     const products = await sneakerModel.find({}).sort({ createdAt: -1 }).exec();
