@@ -2,12 +2,9 @@ import sneakerModel from "@/lib/db/models/sneaker.model";
 import { connectDB } from "@/lib/db/connection";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) => {
+export const GET=async(req:NextRequest,{params}:{params:Promise<{id:String}>})=> {
   try {
-    const { id } = params;
+    const { id } =await params;
     const url = new URL(req.url);
     const keyword = url.searchParams.get("keyword") || "";
     const gte = parseFloat(url.searchParams.get("gte") || "0");
