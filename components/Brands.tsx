@@ -6,8 +6,11 @@ import { BrandItems } from "@/utils/temp";
 
 const Brands = () => {
   return (
-    <div className="bg-black py-12 font-mono">
+    <div className="bg-black py-12 font-mono border-[10px] border-white">
       <div className="container mx-auto px-4">
+        {/* Subheading */}
+        <h2 className="text-white text-2xl font-bold mb-6 text-center">BRANDS</h2>
+
         {/* Desktop View */}
         <div className="hidden md:grid grid-cols-5 gap-6">
           {BrandItems.map((item, i) => (
@@ -37,7 +40,7 @@ const Brands = () => {
           {BrandItems.map((item, i) => (
             <div
               key={i}
-              className="inline-block mx-2 last:mr-0 flex-shrink-0 w-32 shadow-gray-500 shadow-xs"
+              className="inline-block mx-2 last:mr-0 flex-shrink-0 w-32 shadow-gray-700 shadow-md"
             >
               <Link
                 href={item.link}
