@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAdmin, setAuthenticated } from "@/redux/reducers/userSlice";
 import { toast } from "sonner";
 import Gif from "@/public/assets/phoneGif.gif";
-import Bgif from "@/public/assets/bgif.gif";
+import Bgif from "@/public/assets/bbgif.gif";
 
 import Image from "next/image";
 

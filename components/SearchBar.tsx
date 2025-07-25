@@ -74,6 +74,7 @@ export default function TopDrawer({
         onClose={searchCloseHandler}
         onOpen={toggleSearch(true)}
         hideBackdrop
+        sx={{zIndex:50}}
       >
         {content}
       </SwipeableDrawer>

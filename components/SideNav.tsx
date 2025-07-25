@@ -87,7 +87,7 @@ const SideNav = ({
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 mt-2">
+      <nav className="flex-1 mt-2 font-mono">
         <List>
           {navLinks.map((text, index) => (
             <ListItem key={text.item} disablePadding>

@@ -1,10 +1,15 @@
 import { ProductType } from '@/utils/temp';
 import React from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
+
+const MotionLink = motion(Link);
 
 const SearchResultCard = ({ product }: { product: ProductType }) => {
   return (
-    <motion.div
+    // <Link href={`/product/${product?._id}`} className="text-decoration-none cursor-pointer z-[100] ">
+    <MotionLink
+      href={`/products/${product?._id}`}
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -14,7 +19,7 @@ const SearchResultCard = ({ product }: { product: ProductType }) => {
       className="flex w-[95vw] md:w-[500px] items-center gap-4 rounded-xl bg-[#1f1f1f] p-3 shadow-md cursor-pointer mb-1 z-[100]"
     >
       {/* Product Image */}
-      <div className="relative h-20 w-20 overflow-hidden rounded-lg z-50">
+      <div className="relative h-20 w-20 overflow-hidden rounded-lg">
         <img
           src={product?.images[0]?.url}
           alt={product?.name}
@@ -30,7 +35,8 @@ const SearchResultCard = ({ product }: { product: ProductType }) => {
           <span className="text-green-400 font-medium">Rs {product?.price}</span>
         </div>
       </div>
-    </motion.div>
+    </MotionLink>
+    // </Link>
   );
 };
 

@@ -31,7 +31,7 @@ const Navbar = () => {
 
   return (
     <div>
-    <div  className='px-6 md:px-8 flex justify-between items-center text-white bg-gray-900 shadow-md'>
+    <div  className='px-6 md:px-8 flex justify-between items-center text-white bg-[#0a0a0a] shadow-md'>
         <div className='cursor-pointer'>
             <Image src={MenuIcon} alt="menu" className='hover:scale-110 transition-all' onClick={toggleDrawer(true)}/>
         </div>
