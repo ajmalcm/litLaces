@@ -42,8 +42,10 @@ import { toast } from "sonner";
   return (
    <div>
     {/* bannerVideo */}
-    <video src='/assets/bannerVideo1.mp4' autoPlay muted loop playsInline className="hidden md:block"/>
-    <video src='/assets/phoneBanner.mp4' autoPlay muted loop playsInline className="block md:hidden"/>
+    <div className="h-[85vh]">
+    <video src='/assets/bannerVideo1.mp4' autoPlay muted loop playsInline className="hidden md:block w-full h-full object-cover"/>
+    <video src='/assets/phoneBanner.mp4' autoPlay muted loop playsInline className="block md:hidden w-full h-full object-cover"/>
+      </div>
     {/* <Image src={Gif} alt="fdf" className="block md:hidden"/> */}
 
     {/* shop by Brands */}
@@ -52,12 +54,17 @@ import { toast } from "sonner";
     </div>
 
     {/* 3 banners */}
-    <div className="flex flex-col w-full">
-      {
-        BannerItems.map((item,i)=>(
-          <Banner key={i} img={item.image} alt={item.alt} text={item.text} link={item.link}/>
-        ))
-      }
+    <div className="py-8">
+      <div className="grid md:grid-cols-3 gap-4">
+        {
+          BannerItems.map((item,i)=>(
+
+            <div key={i} className="w-full">
+              <Banner img={item.image} alt={item.alt} text={item.text} link={item.link}/>
+            </div>
+          ))
+        }
+      </div>
    
     </div>
 

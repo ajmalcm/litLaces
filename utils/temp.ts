@@ -8,6 +8,9 @@ import Image from "next/image";
 import Banner1 from "@/public/assets/banner1.jpg";
 import Banner2 from "@/public/assets/banner2.jpg";
 import Banner3 from "@/public/assets/banner3.jpg";
+import Men from "@/public/assets/men.jpg";
+import Women from "@/public/assets/women.jpg";
+import All from "@/public/assets/all.jpg";
 import Gif from "@/public/assets/phoneGif.gif";
 import P2 from "@/public/assets/p2.webp";
 import P3 from "@/public/assets/p3.webp";
@@ -19,6 +22,15 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import PeopleIcon from "@mui/icons-material/People";
 
+
+export  type ProductType = {
+    _id:String,
+    name: string;
+    images: { url: string }[];
+    price: number;
+    sizes: [{_id:string, size:number,stock:number}];
+    // add other fields as needed
+  };
 
 export const BrandItems = [
     { name: "adidas", logo: Adidas,link:'/collections/Adidas'},
@@ -69,7 +81,7 @@ export const ProductsArray =[
   },
 ] 
 
-  export const BannerItems=[{image:Banner3,alt:"img1",text:"Shop Men",link:"shopMen"},{image:Banner1,alt:"img2",text:"Shop Women",link:"ShopWomen"},{image:Banner2,alt:"img3",text:"Shop All",link:"ShopAll"}]
+  export const BannerItems=[{image:Men,alt:"img1",text:"Shop Men",link:"shopMen"},{image:Women,alt:"img2",text:"Shop Women",link:"ShopWomen"},{image:All,alt:"img3",text:"Shop All",link:"ShopAll"}]
    
 export const productImgs=[P2,P3,P4,P5,P6]
 

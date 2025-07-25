@@ -19,7 +19,8 @@ export const GET=async(req:NextRequest,{params}:{params:Promise<{id:String}>})=>
       filter = { $or: [{ category: id }, { brand: id }] };
     }
     if (keyword) {
-      filter = { ...filter, name: { $regex: keyword, $options: "i" } };
+      filter = { ...filter, $or:[{name: { $regex: keyword, $options: "i" }},
+        {category:{$regex:keyword,$options:"i"}},{brand:{$regex:keyword,$options:"i"}} ]};
     }
     if (gte !== 0 || lte !== 10000) {
       filter = { ...filter, price: { $gte: gte, $lte: lte } };
