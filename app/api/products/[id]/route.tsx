@@ -1,9 +1,9 @@
 import sneakerModel from "@/lib/db/models/sneaker.model";
 import { connectDB } from "@/lib/db/connection";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (
-  req: Request,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) => {
   try {
