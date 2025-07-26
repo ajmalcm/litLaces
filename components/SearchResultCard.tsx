@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 const MotionLink = motion(Link);
 
-const SearchResultCard = ({ product }: { product: ProductType }) => {
+const SearchResultCard = ({ product,searchCloseHandler }: { product: ProductType,searchCloseHandler:Function }) => {
   return (
     // <Link href={`/product/${product?._id}`} className="text-decoration-none cursor-pointer z-[100] ">
     <MotionLink
@@ -17,6 +17,7 @@ const SearchResultCard = ({ product }: { product: ProductType }) => {
       transition={{ duration: 0.25, ease: "easeOut" }}
       whileHover={{ scale: 1.03, boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}
       className="flex w-[95vw] md:w-[500px] items-center gap-4 rounded-xl bg-[#1f1f1f] p-3 shadow-md cursor-pointer mb-1 z-[100]"
+      onClick={() => searchCloseHandler()}
     >
       {/* Product Image */}
       <div className="relative h-20 w-20 overflow-hidden rounded-lg">

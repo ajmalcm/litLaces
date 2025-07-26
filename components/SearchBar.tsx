@@ -30,6 +30,7 @@ export default function TopDrawer({
     { skip: !shouldFetch }
   );
   
+  
   useEffect(()=>{
     const handler=setTimeout(()=>{
       setDebouncedSearch(searchText.trim());
@@ -102,7 +103,7 @@ export default function TopDrawer({
           </div>
         ) : (
           data.sneakers.map((product: any) => (
-            <SearchResultCard key={product._id} product={product} />
+            <SearchResultCard key={product._id} product={product} searchCloseHandler={searchCloseHandler}/>
           ))
         )}
     </div>

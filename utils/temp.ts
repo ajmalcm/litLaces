@@ -81,7 +81,7 @@ export const ProductsArray =[
   },
 ] 
 
-  export const BannerItems=[{image:Men,alt:"img1",text:"Shop Men",link:"shopMen"},{image:Women,alt:"img2",text:"Shop Women",link:"ShopWomen"},{image:All,alt:"img3",text:"Shop All",link:"ShopAll"}]
+  export const BannerItems=[{image:Men,alt:"img1",text:"Shop Men",link:"Men"},{image:Women,alt:"img2",text:"Shop Women",link:"Women"},{image:All,alt:"img3",text:"Shop All",link:"all"}]
    
 export const productImgs=[P2,P3,P4,P5,P6]
 
