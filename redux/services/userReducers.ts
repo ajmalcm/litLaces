@@ -44,6 +44,23 @@ export const userReducerApi=createApi({
             query:(id)=>`products/details/${id}`,
             keepUnusedDataFor:0, // disables caching
         }),
+        getCart:builder.query({
+            query:()=>"user/cart",
+        }),
+        addToOrIncreaseCart:builder.mutation({
+            query:({action,product})=>({
+                url:"user/cart/add",
+                method:"POST",
+                body:{action,product},
+            })
+        }),
+        removeFromOrDecreaseCart:builder.mutation({
+            query:({productId,action})=>({
+                url:"user/cart/remove",
+                method:"POST",
+                body:{productId,action},
+            })
+        }),
         getAdminAllProducts:builder.query({
             query:()=>"admin/allProducts",
         }),
@@ -54,4 +71,4 @@ export const userReducerApi=createApi({
 
 })
 
-export const {useLoadUserQuery,useRegisterUserMutation,useLoginUserMutation,useLogoutuserMutation,useGetProductsQuery,useGetProductDetailsQuery,useGetAdminAllProductsQuery,useGetAdminAllUsersQuery}=userReducerApi
+export const {useLoadUserQuery,useRegisterUserMutation,useLoginUserMutation,useLogoutuserMutation,useGetProductsQuery,useGetProductDetailsQuery,useGetAdminAllProductsQuery,useGetAdminAllUsersQuery,useGetCartQuery,useAddToOrIncreaseCartMutation,useRemoveFromOrDecreaseCartMutation}=userReducerApi

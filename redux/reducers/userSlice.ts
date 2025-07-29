@@ -1,15 +1,27 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { set } from 'mongoose';
 
 interface UserState {
     isAuthenticated: boolean;
     isAdmin: boolean;
-    name:string
+    name:string;
+    cart:Array<{
+        product: string;
+        quantity: number;
+        size: string;
+        price: number;
+        image: {
+            public_id: string;
+            url: string;
+        };
+    }>
 }
 
 const initialState: UserState = {
     isAuthenticated: false,
     isAdmin: false,
     name: '',
+    cart:[]
 };
 
 const userSlice = createSlice({
@@ -24,9 +36,12 @@ const userSlice = createSlice({
         },
         setName(state, action: PayloadAction<string>) {
             state.name = action.payload;
+        },
+        setCart(state,action:PayloadAction<UserState['cart']>) {
+            state.cart = action.payload;
         }
     },
 });
 
-export const { setAuthenticated, setAdmin ,setName} = userSlice.actions;
+export const { setAuthenticated, setAdmin ,setName,setCart} = userSlice.actions;
 export default userSlice;

@@ -118,6 +118,17 @@ export const orders = [
   },
 ];
 
+export type ProductInput = {
+  productId: string ;
+  quantity: number;
+  size: string;
+  price: number;
+  image: {
+    public_id: string;
+    url: string;
+  };
+};
+
 
 export const dashLinks=[{icon:AttachMoneyIcon,header:"Total Revenue",content:"$12,361",color:'text-green-500'},{icon:ShoppingCartIcon,header:"Total Orders",content:"431,225",color:'text-blue-500'},{icon:InventoryIcon,header:"All Products",content:"32,441",color:'text-yellow-500'},{icon:PeopleIcon,header:"All Users",content:"1,325,134",color:"text-purple-500"}]
 

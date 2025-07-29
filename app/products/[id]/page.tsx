@@ -11,7 +11,7 @@ import ProductCard from "@/components/ProductCard";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import CarouselComponent from "@/components/Carousel";
 import ShippingAccordion from "@/components/ShippingAccordion";
-import { useGetProductDetailsQuery } from "@/redux/services/userReducers";
+import { useAddToOrIncreaseCartMutation, useGetProductDetailsQuery } from "@/redux/services/userReducers";
 import ProductDetailsLoader from "@/components/loaders/ProductDetailsLoader";
 import WhatsAppButton from "@/components/WhatsAppButton";
 
@@ -27,14 +27,18 @@ const page = () => {
   };
   
   const [product, setProduct] = useState<ProductType | null>(null);
+  const [quantity, setQuantity] = useState<number>(1);
+  const [size, setSize] = useState<number>(0);
   const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([]);
   const sizeVariants: Record<string, number> = {"39":5,"40":6,"41": 7, "42": 8, "43": 9, "44": 10}; // Example size mapping
-
+  
   const {data,error,isLoading}=useGetProductDetailsQuery(id);
+  const [addToCart,{isLoading:addToCartLoading,error:addToCartError}]=useAddToOrIncreaseCartMutation();
 
   useEffect(()=>{
     if(data && data.product) {
       setProduct(data.product);
+      setSize(data.product.sizes[0]?.size);
       setRelatedProducts(data.relatedProducts);
       console.log("Product Data:", data.product);
       console.log("Related Products:", data.relatedProducts);
@@ -55,6 +59,39 @@ const page = () => {
     }),
   }));
 
+  const addToCarthandler=async ()=>{
+   await await addToCart({action:"addToCart",product:{
+      productId: product?._id,
+      quantity,
+      size: size.toString(),
+      price: product?.price,
+      image: product?.images[0],
+    }}).unwrap();
+    // console.log("Product added to cart successfully"); 
+  }
+
+  const onQtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    if (!isNaN(value) && value > 0) {
+      setQuantity(value);
+    }
+  }
+
+  const inCreaseQty=()=>{
+    setQuantity((prevQty) => prevQty + 1);
+  }
+
+  const deCreaseQty=()=>{
+    setQuantity((prevQty) => (prevQty > 1 ? prevQty - 1 : 1));
+  }
+
+  const sizeChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedSize = parseInt(e.target.value, 10);
+    if (!isNaN(selectedSize)) {
+      setSize(selectedSize);
+    }
+    console.log("Selected Size:", selectedSize);
+  }
 
   return isLoading?<ProductDetailsLoader/>: (
     <div>
@@ -73,7 +110,7 @@ const page = () => {
           <p className="text-[12px] tracking-widest text-slate-300 font-mono"><u>Shipping</u> calculated at checkout.</p>
           <div className="flex flex-col gap-2">
             <p className="text-[13px] text-slate-300 font-mono font-bold">SIZE</p>
-            <select className="bg-black py-3 px-4 rounded-lg border-[1px] border-gray-400 text-sm md:max-w-[200px]">
+            <select className="bg-black py-3 px-4 rounded-lg border-[1px] border-gray-400 text-sm md:max-w-[200px]" value={size} onChange={sizeChangeHandler}>
               {
                 product?.sizes?.map((sizeObj : any, index) => (
                   <option key={index} value={sizeObj.size}>
@@ -90,12 +127,12 @@ const page = () => {
           <div className="flex flex-col gap-2">
             <p className="text-[13px] text-slate-300 font-mono font-bold">QUANTITY</p>
             <div className="flex border-[1px] border-gray-400 max-w-fit p-2 rounded-xl">
-            <p>-</p>
-            <input type='text' defaultValue={1} className="bg-black text-center max-w-[100px] border-none outline-none"></input>
-            <p>+</p>
+            <p onClick={deCreaseQty}>-</p>
+            <input type='text' value={quantity} onChange={onQtyChange} className="bg-black text-center max-w-[100px] border-none outline-none"></input>
+            <p onClick={inCreaseQty}>+</p>
             </div>
           </div>
-          <button className="p-3 border-[1px] border-gray-400 font-mono rounded-xl bg-white text-black font-bold">Add to cart</button>
+          <button className="p-3 border-[1px] border-gray-400 font-mono rounded-xl bg-white text-black font-bold" onClick={addToCarthandler}>Add to cart</button>
           <WhatsAppButton productName={product?.name || "this product"} />
           <ShippingAccordion/>
         </div>
