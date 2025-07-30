@@ -46,6 +46,7 @@ export const userReducerApi=createApi({
         }),
         getCart:builder.query({
             query:()=>"user/cart",
+            keepUnusedDataFor:0, // disables caching
         }),
         addToOrIncreaseCart:builder.mutation({
             query:({action,product})=>({

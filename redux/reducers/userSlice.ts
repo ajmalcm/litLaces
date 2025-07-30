@@ -10,6 +10,7 @@ interface UserState {
         quantity: number;
         size: string;
         price: number;
+        name: string;
         image: {
             public_id: string;
             url: string;

@@ -10,7 +10,7 @@ export async function GET(req:NextRequest){
         if(!user || typeof user !== "object" || !("id" in user)){
             return NextResponse.json({message:"Please login to access cart data.",success:false},{status:401});
         }
-        const cartItems = await cartModel.findOne({user:user.id}).populate("cartItems","name price images").populate("user","name email");
+        const cartItems = await cartModel.findOne({user:user.id}).populate("cartItems");
         if(!cartItems){
             return NextResponse.json({message:"Cart is empty.",success:false},{status:404});
         }

@@ -7,10 +7,10 @@ import "swiper/css/navigation";
 import HomeAbout from "@/components/HomeAbout";
 import EmailSection from "@/components/EmailSection";
 import { BannerItems } from "@/utils/temp";
-import { useLoadUserQuery } from "@/redux/services/userReducers";
+import { useGetCartQuery, useLoadUserQuery } from "@/redux/services/userReducers";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setAdmin, setAuthenticated } from "@/redux/reducers/userSlice";
+import { setAdmin, setAuthenticated, setCart } from "@/redux/reducers/userSlice";
 import { toast } from "sonner";
 import Gif from "@/public/assets/phoneGif.gif";
 import Bgif from "@/public/assets/bbgif.gif";
@@ -19,6 +19,7 @@ import Image from "next/image";
 
 const Home = () => {
   const { isLoading, data, error } = useLoadUserQuery("");
+  const {data:cartData, isLoading:cartLoading, error:cartError} = useGetCartQuery("");
   const { isAdmin, isAuthenticated } = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -33,7 +34,7 @@ const Home = () => {
       return;
     }
 
-    if (data && data.success) {
+    if (data && data.success ) {
       dispatch(setAuthenticated(true));
       dispatch(setAdmin(data.isAdmin));
       toast.success(data.message);
@@ -41,7 +42,23 @@ const Home = () => {
       dispatch(setAuthenticated(false));
       dispatch(setAdmin(false));
     }
-  }, [error, dispatch, isLoading, isAdmin, isAuthenticated]);
+   
+  }, [error, dispatch, data, isAdmin, isAuthenticated]);
+
+
+  // useEffect(()=>{
+  //   console.log("Cart Data:", cartData);
+  //   if(cartData && cartData.success) {
+  //     dispatch(setCart(cartData.cartItems.cartItems));
+  //   }
+  //   if(cartError) {
+  //     if ("data" in cartError) {
+  //       const errorMessage = (cartError.data as { message: string })?.message;
+  //       toast.error(errorMessage);
+  //     }
+  //   }
+
+  // },[cartData,cartError,dispatch])
   return (
     <div>
       {/* bannerVideo */}

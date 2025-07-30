@@ -4,6 +4,7 @@ interface CartItem extends Document {
   user: Schema.Types.ObjectId;
   cartItems: Array<{
     product: string;
+    name: string;
     quantity: number;
     size: string;
     price: number;
@@ -24,6 +25,7 @@ const CartSchema = new Schema<CartItem>(
           type: String,
           required: true,
         },
+        name: { type: String, required: true },
         quantity: { type: Number, required: true, default: 1 },
         size: { type: String, required: true },
         price: { type: Number, required: true },

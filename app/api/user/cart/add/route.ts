@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 
 interface ProductInput {
   productId: string;
+  name: string;
   quantity: number;
   size: string;
   price: number;
@@ -43,6 +44,7 @@ export async function POST(req: NextRequest) {
         cartItems: [
           {
             product: productId,
+            name: product.name, // Ensure name is included
             quantity: product.quantity,
             size: product.size,
             price: product.price,
@@ -99,6 +101,7 @@ export async function POST(req: NextRequest) {
       // Product not in cart — add it
       userCart.cartItems.push({
         product: productId,
+        name: product.name, // Ensure name is included
         quantity: product.quantity,
         size: product.size,
         price: product.price,

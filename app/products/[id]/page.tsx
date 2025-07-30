@@ -14,6 +14,9 @@ import ShippingAccordion from "@/components/ShippingAccordion";
 import { useAddToOrIncreaseCartMutation, useGetProductDetailsQuery } from "@/redux/services/userReducers";
 import ProductDetailsLoader from "@/components/loaders/ProductDetailsLoader";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { setCart } from "@/redux/reducers/userSlice";
+import { useDispatch } from "react-redux";
+import { toast } from "sonner";
 
 const page = () => {
   const { id } = useParams();
@@ -30,10 +33,11 @@ const page = () => {
   const [quantity, setQuantity] = useState<number>(1);
   const [size, setSize] = useState<number>(0);
   const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([]);
+  const dispatch = useDispatch();
   const sizeVariants: Record<string, number> = {"39":5,"40":6,"41": 7, "42": 8, "43": 9, "44": 10}; // Example size mapping
   
   const {data,error,isLoading}=useGetProductDetailsQuery(id);
-  const [addToCart,{isLoading:addToCartLoading,error:addToCartError}]=useAddToOrIncreaseCartMutation();
+  const [addToCart,{isLoading:addToCartLoading,error:addToCartError,data:cartData}]=useAddToOrIncreaseCartMutation();
 
   useEffect(()=>{
     if(data && data.product) {
@@ -60,14 +64,22 @@ const page = () => {
   }));
 
   const addToCarthandler=async ()=>{
-   await await addToCart({action:"addToCart",product:{
+   const {data:cartData,error}=await addToCart({action:"addToCart",product:{
       productId: product?._id,
+      name: product?.name,
       quantity,
       size: size.toString(),
       price: product?.price,
       image: product?.images[0],
-    }}).unwrap();
-    // console.log("Product added to cart successfully"); 
+    }});
+    console.log(cartData);
+    if(cartData?.success)
+    {
+      dispatch(setCart(cartData?.cartItems)); // Dispatch the cart items to the Redux store
+      toast.success(cartData?.message);
+    }
+    else
+      toast.error(cartData?.message);
   }
 
   const onQtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
