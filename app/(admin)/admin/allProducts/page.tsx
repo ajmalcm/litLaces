@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   Box,
@@ -14,48 +14,71 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import { mockProducts } from "@/utils/temp";
-import Image from "next/image";
+import { useGetAdminAllProductsQuery } from "@/redux/services/userReducers";
+
+type ProductType = {
+  _id: string;
+  name: string;
+  brand: string;
+  category: string;
+  gender: string;
+  sizes: {
+    _id: string;
+    size: number;
+    stock: number;
+  }[];
+  price: number;
+  images: {
+    _id: string;
+    public_id: string;
+    url: string;
+  }[];
+  description: string;
+};
 
 const AllProducts = () => {
-  const [products, setProducts] = useState(mockProducts);
+  const { data = [], isLoading, error } = useGetAdminAllProductsQuery("");
+  const [products, setProducts] = useState<ProductType[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
-
-  // Responsive breakpoint
   const isMobile = useMediaQuery("(max-width:600px)");
 
-  // Filter Logic
-  const filteredProducts = products.filter((product) => {
-    return (
-      product.name.toLowerCase().includes(search.toLowerCase()) &&
-      (category === "" || product.category === category)
-    );
-  });
+  useEffect(() => {
+    if (
+      Array.isArray(data) &&
+      (products.length !== data.length ||
+        products.some((p, i) => p._id !== data[i]._id))
+    ) {
+      setProducts(data);
+    }
+  }, [data]);
 
-  // Delete Handler
-  const handleDelete = (id: any) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this product?"
+  const filteredProducts = useMemo(() => {
+    return products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(search.toLowerCase()) &&
+        (category === "" || product.category === category)
     );
-    if (confirmDelete) {
-      setProducts((prev) => prev.filter((product) => product.id !== id));
+  }, [products, search, category]);
+
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      setProducts((prev) => prev.filter((product) => product._id !== id));
     }
   };
 
-  // DataGrid Columns
   const columns = [
     {
-      field: "image",
+      field: "images",
       headerName: "Image",
       width: isMobile ? 80 : 100,
       renderCell: (params: any) => (
-        <Image
-          src={params.value}
+        <img
+          src={params.value && params.value[0]?.url}
           alt={params.row.name}
+          width={50}
+          height={50}
           style={{
-            width: "50px",
-            height: "50px",
             objectFit: "cover",
             borderRadius: "8px",
           }}
@@ -63,7 +86,7 @@ const AllProducts = () => {
       ),
       sortable: false,
     },
-    { field: "id", headerName: "ID", width: 80 },
+    { field: "_id", headerName: "ID", width: 80 },
     { field: "name", headerName: "Product Name", flex: 1 },
     { field: "category", headerName: "Category", width: 150 },
     {
@@ -76,12 +99,18 @@ const AllProducts = () => {
       field: "stock",
       headerName: "Stock",
       width: 120,
-      renderCell: (params: any) =>
-        params.value > 10 ? (
-          <span style={{ color: "green" }}>{params.value} in stock</span>
+      renderCell: (params: any) => {
+        // Calculate total stock from sizes
+        const totalStock = params.row.sizes.reduce(
+          (sum: number, s: any) => sum + s.stock,
+          0
+        );
+        return totalStock > 10 ? (
+          <span style={{ color: "green" }}>{totalStock} in stock</span>
         ) : (
-          <span style={{ color: "red" }}>{params.value} left</span>
-        ),
+          <span style={{ color: "red" }}>{totalStock} left</span>
+        );
+      },
     },
     {
       field: "actions",
@@ -93,14 +122,14 @@ const AllProducts = () => {
           <IconButton
             color="primary"
             size="small"
-            onClick={() => alert(`Edit Product ${params.row.id}`)}
+            onClick={() => alert(`Edit Product ${params.row._id}`)}
           >
             <Edit />
           </IconButton>
           <IconButton
             color="error"
             size="small"
-            onClick={() => handleDelete(params.row.id)}
+            onClick={() => handleDelete(params.row._id)}
           >
             <Delete />
           </IconButton>
@@ -108,6 +137,10 @@ const AllProducts = () => {
       ),
     },
   ];
+
+  if (isLoading) return <Typography>Loading...</Typography>;
+  if (error)
+    return <Typography color="error">Error loading products.</Typography>;
 
   return (
     <Box
@@ -120,7 +153,6 @@ const AllProducts = () => {
         maxWidth: "100vw",
       }}
     >
-      {/* Header */}
       <Typography
         variant="h4"
         component="h1"
@@ -129,8 +161,6 @@ const AllProducts = () => {
       >
         All Products
       </Typography>
-
-      {/* Filters */}
       <Box
         sx={{
           display: "flex",
@@ -172,16 +202,12 @@ const AllProducts = () => {
             }}
           >
             <MenuItem value="">All</MenuItem>
-            <MenuItem value="Shoes">Shoes</MenuItem>
-            <MenuItem value="Sneakers">Sneakers</MenuItem>
-            <MenuItem value="Boots">Boots</MenuItem>
-            <MenuItem value="Loafers">Loafers</MenuItem>
-            <MenuItem value="Sandals">Sandals</MenuItem>
+            <MenuItem value="Men">Men</MenuItem>
+            <MenuItem value="Women">Women</MenuItem>
+            <MenuItem value="Unisex">Unisex</MenuItem>
           </Select>
         </FormControl>
       </Box>
-
-      {/* DataGrid */}
       <Box
         sx={{
           height: 500,
@@ -192,7 +218,7 @@ const AllProducts = () => {
         }}
       >
         <DataGrid
-          rows={filteredProducts}
+          rows={filteredProducts.map((p) => ({ ...p, id: p._id }))}
           columns={columns}
           initialState={{
             pagination: {
@@ -223,10 +249,10 @@ const AllProducts = () => {
               color: "#fff",
             },
             "& .MuiSvgIcon-root": {
-              color: "#ccc", // Sort and menu icon color
+              color: "#ccc",
             },
             "& .MuiSvgIcon-root:hover": {
-              color: "#ccc", // Hover state for sort and menu icons
+              color: "#ccc",
             },
             " & .MuiDataGrid-row": {
               backgroundColor: "rgb(31 41 55)",

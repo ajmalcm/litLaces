@@ -1,10 +1,15 @@
+"use client"
+
 import * as React from "react";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import CloseIcon from "@mui/icons-material/Close";
 import { Button } from "@mui/material";
 import { CartItem } from "./CartItem";
 import Link from "next/link";
-import { ProductsArray } from "@/utils/temp";
+import { useGetCartQuery } from "@/redux/services/userReducers";
+import { useSelector ,useDispatch} from "react-redux";
+import { toast } from "sonner";
+import { setCart } from "@/redux/reducers/userSlice";
 
 export default function TopDrawer({
   isCart,
@@ -13,6 +18,25 @@ export default function TopDrawer({
   isCart: boolean;
   toggleCart: any;
 }) {
+
+  const {data:cartData, isLoading:cartLoading, error:cartError} = useGetCartQuery("",{skip:!isCart});
+  const {cart}=useSelector((state: any) => state.auth);
+  const dispatch = useDispatch();
+
+  React.useEffect(()=>{
+    if(cartData && cartData.success) {
+      console.log("Cart Data:", cartData);
+      dispatch(setCart(cartData.cartItems.cartItems));
+    }
+    if(cartError) {
+      if ("data" in cartError) {
+        const errorMessage = (cartError.data as { message: string })?.message;
+        toast.error(errorMessage);
+      }
+    }
+
+  },[isCart])
+ 
   const content = (
     <div className=" bg-[#0f0f0f] text-white ">
         <div className="max-w-5xl mx-auto p-4 md:py-6">
@@ -24,10 +48,10 @@ export default function TopDrawer({
 
         {/* Cart Item */}
         {
-          ProductsArray.slice(0,4).map((product,index)=>(
-            <Link href={`/products/${product.productName}`} key={index}>
-            <CartItem img={product.img} name={product.productName} price={product.price} size={product.size}/>
-            </Link>
+          cart?.map((product:any,index:number)=>(
+            // <Link href={`/products/${product._id}`} key={index}>
+            <CartItem key={index} img={product.image} name={product.name} price={product.price} size={product.size} quantity={product.quantity} productId={product?.product}/>
+            // </Link>
           ))
         }
 

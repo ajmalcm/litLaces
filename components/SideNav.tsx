@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import InstagramIcon from "@mui/icons-material/Instagram";
-// import Logo from "@/public/icons/lit_laces.png";
 import Logo from "@/public/icons/loog.png";
 import CloseIcon from "@/public/icons/close.svg";
 import Image from "next/image";
@@ -26,7 +25,7 @@ const SideNav = ({
 }) => {
   const { isAuthenticated, isAdmin } = useSelector((state: any) => state.auth);
   const navigate = useRouter();
-  const [logoutTrigger] =  useLogoutuserMutation(); // Ensure the API call completes
+  const [logoutTrigger] = useLogoutuserMutation();
   const dispatch = useDispatch();
 
   const navLinks = [
@@ -38,80 +37,106 @@ const SideNav = ({
       item: isAuthenticated ? "Log-Out" : "Log-in",
       link: isAuthenticated ? "/" : "/login",
     },
-    // {item:"login ",link:"/login"},{item:"sign-up",link:"/sign-up"}
     { item: "admin", link: "/admin" },
   ];
 
-  const logoutHandler =  async (text: string) => {
+  const logoutHandler = async (text: string) => {
     try {
-      const {data,error}=await logoutTrigger("");
-      console.log("Logout Response:", data);
-  
+      const { data, error } = await logoutTrigger("");
       if (error) {
         toast.error("Unable to logout now. Try later!");
         return;
       }
-  
       if (data) {
         dispatch(setAuthenticated(false));
         dispatch(setAdmin(false));
         toast.success(data?.message);
       }
-  
-      window.location.href = text; // Redirect to the specified link
-    } catch (err) {    
+      window.location.href = text;
+    } catch (err) {
       console.error("Logout Error:", err);
-      toast.error("An unexpected error occurred.");   
+      toast.error("An unexpected error occurred.");
     }
   };
-  
-  
-  const handleLogin=(text:string)=>
-  {
-    navigate.push(text)
 
-  }
+  const handleLogin = (text: string) => {
+    navigate.push(text);
+  };
 
   const DrawerList = (
     <Box
       sx={{
-        width: { xs: "100vw", sm: 400 },
+        width: { xs: "100vw", sm: 320 },
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        backgroundColor: "#eaeaea",
+        backgroundColor: "#111827",
         height: "100vh",
+        borderTopRightRadius: 16,
+        borderBottomRightRadius: 16,
+        boxShadow: 6,
+        color: "white",
+        p: 0,
       }}
       role="presentation"
       onClick={toggleDrawer(false)}
     >
-      <div className="flex justify-start items-center p-6 md:p-8 bg-[#0a0a0a] cursor-pointer">
-        <Image src={CloseIcon} alt="closeIcon" />
+      {/* Close Icon */}
+      <div className="flex justify-end items-center p-4 bg-gray-900">
+        <Image src={CloseIcon} alt="closeIcon" width={28} height={28} />
       </div>
-      <List className="-mt-[40vh] px-8 text-lg">
-        {navLinks.map((text, index) => (
-          <ListItem key={text.item} disablePadding>
-            {/* <Link href={text.link}> */}
-            <ListItemButton onClick={() =>text.item ==="Log-Out"? logoutHandler(text.link):handleLogin(text.link)}>
-              <ListItemText primary={text.item} />
-            </ListItemButton>
-            {/* </Link> */}
-          </ListItem>
-        ))}
-      </List>
-      <div className="flex justify-between items-center px-8 bg-[#0a0a0a] cursor-pointer">
-        <Image src={Logo} alt="logo" width={70} height={70} />
+
+      {/* Navigation Links */}
+      <nav className="flex-1 mt-2 font-mono">
+        <List>
+          {navLinks.map((text, index) => (
+            <ListItem key={text.item} disablePadding>
+              <ListItemButton
+                onClick={() =>
+                  text.item === "Log-Out"
+                    ? logoutHandler(text.link)
+                    : handleLogin(text.link)
+                }
+                sx={{
+                  px: 3,
+                  py: 2,
+                  color: "gray.300",
+                  "&:hover": {
+                    backgroundColor: "#1f2937",
+                    color: "#fff",
+                  },
+                  borderRadius: 2,
+                  my: 0.5,
+                }}
+              >
+                <ListItemText
+                  primary={text.item}
+                  sx={{
+                    ".MuiTypography-root": {
+                      fontWeight: 500,
+                      fontSize: "1rem",
+                      letterSpacing: "0.02em",
+                    },
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </nav>
+
+      {/* Logo + Instagram Section */}
+      <div className="flex justify-between items-center px-8 py-6 bg-gray-900 border-t border-gray-800">
+        <Image src={Logo} alt="logo" width={60} height={60} />
         <InstagramIcon style={{ color: "white" }} fontSize="large" />
       </div>
     </Box>
   );
 
   return (
-    <div>
-      <Drawer open={open} onClose={toggleDrawer(false)}>
-        {DrawerList}
-      </Drawer>
-    </div>
+    <Drawer open={open} onClose={toggleDrawer(false)}>
+      {DrawerList}
+    </Drawer>
   );
 };
 

@@ -1,52 +1,63 @@
 "use client";
-
 import React from "react";
-import { BrandItems } from "@/utils/temp";
 import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode, Pagination } from "swiper/modules";
 import Link from "next/link";
+import { BrandItems } from "@/utils/temp";
 
 const Brands = () => {
   return (
-    <div className="bg-black flex flex-col gap-3 text-white  py-12 font-mono border-y-2 border-white">
-      {/* top */}
-      <p className="text-4xl font-bold text-center">Shop By Brand</p>
-      {/* bottom */}
-      <div className="gap-6 justify-center items-center flex-wrap hidden md:flex">
-      {
-          BrandItems.map((item,i)=><div key={i} className='flex flex-col gap-4'>
-            <Link href={item.link}>
-            <Image src={item.logo} alt={item.name} height={200}/>
-            <button className='outline-none border-none self-start pl-4'>{item.name+' ->'}</button>
-            </Link>
-            </div>)
-        }
-      </div>
+    <div className="bg-black py-12 font-mono border-[10px] border-white">
+      <div className="container mx-auto px-4">
+        {/* Subheading */}
+        <h2 className="text-white text-2xl font-bold mb-6 text-center">BRANDS</h2>
 
-      <div className="gap-6 justify-center items-center flex-wrap flex md:hidden">
-        {/* brand Card */}
-        <Swiper
-          slidesPerView={3}
-          spaceBetween={30}
-          freeMode={true}
-          pagination={{
-            clickable: true
-          }}
-          modules={[FreeMode, Pagination]}
-          className="mySwiper "
-        >
+        {/* Desktop View */}
+        <div className="hidden md:grid grid-cols-5 gap-6">
           {BrandItems.map((item, i) => (
-            <SwiperSlide key={i}>
-              <Link href={item.link}>
-              <Image src={item.logo} alt={item.name} /> 
-              <button className="outline-none border-none self-start pl-4">
-                {item.name+' ->'}
-              </button>
+            <div
+              key={i}
+              className="flex flex-col items-center justify-center p-4 shadow-gray-700 bg-[#0a0a0a] rounded-xs shadow-md hover:shadow-xl delay-300 ease-out transition-shadow duration-700"
+            >
+              <Link href={item.link} className="flex flex-col items-center">
+                <div className="h-24 w-24 relative mb-2">
+                  <Image
+                    src={item.logo}
+                    alt={item.name}
+                    fill
+                    style={{ objectFit: "contain" }}
+                  />
+                </div>
+                <span className="text-gray-700 font-semibold hover:text-blue-600 transition-colors duration-300">
+                  {item.name}
+                </span>
               </Link>
-            </SwiperSlide>
+            </div>
           ))}
-        </Swiper>
+        </div>
+
+        {/* Mobile View */}
+        <div className="md:hidden overflow-x-auto whitespace-nowrap py-4">
+          {BrandItems.map((item, i) => (
+            <div
+              key={i}
+              className="inline-block mx-2 last:mr-0 flex-shrink-0 w-32 shadow-gray-700 shadow-md"
+            >
+              <Link
+                href={item.link}
+                className="flex flex-col items-center justify-center p-4 bg-[#0a0a0a] rounded-lg"
+              >
+                <div className="h-20 w-20 relative mb-2">
+                  <Image
+                    src={item.logo}
+                    alt={item.name}
+                    fill
+                    style={{ objectFit: "contain" }}
+                  />
+                </div>
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
