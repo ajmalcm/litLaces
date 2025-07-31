@@ -20,7 +20,6 @@ const page = () => {
     images: { url: string }[];
     price: number;
     sizes: [{_id:string, size:number,stock:number}];
-    // add other fields as needed
   };
   
   const [product, setProduct] = useState<ProductType | null>(null);
