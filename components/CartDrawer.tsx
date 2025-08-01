@@ -19,7 +19,7 @@ export default function TopDrawer({
   toggleCart: any;
 }) {
 
-  const {data:cartData, isLoading:cartLoading, error:cartError} = useGetCartQuery("",{skip:!isCart});
+  const {data:cartData, isLoading:cartLoading, error:cartError} = useGetCartQuery("");
   const {cart}=useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
 
@@ -36,6 +36,8 @@ export default function TopDrawer({
     }
 
   },[isCart])
+
+
  
   const content = (
     <div className=" bg-[#0f0f0f] text-white ">

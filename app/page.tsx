@@ -7,7 +7,7 @@ import "swiper/css/navigation";
 import HomeAbout from "@/components/HomeAbout";
 import EmailSection from "@/components/EmailSection";
 import { BannerItems } from "@/utils/temp";
-import { useGetCartQuery, useLoadUserQuery } from "@/redux/services/userReducers";
+import {useLoadUserQuery } from "@/redux/services/userReducers";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setAdmin, setAuthenticated, setCart } from "@/redux/reducers/userSlice";
@@ -19,7 +19,6 @@ import Image from "next/image";
 
 const Home = () => {
   const { isLoading, data, error } = useLoadUserQuery("");
-  const {data:cartData, isLoading:cartLoading, error:cartError} = useGetCartQuery("");
   const { isAdmin, isAuthenticated } = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -46,19 +45,7 @@ const Home = () => {
   }, [error, dispatch, data, isAdmin, isAuthenticated]);
 
 
-  // useEffect(()=>{
-  //   console.log("Cart Data:", cartData);
-  //   if(cartData && cartData.success) {
-  //     dispatch(setCart(cartData.cartItems.cartItems));
-  //   }
-  //   if(cartError) {
-  //     if ("data" in cartError) {
-  //       const errorMessage = (cartError.data as { message: string })?.message;
-  //       toast.error(errorMessage);
-  //     }
-  //   }
-
-  // },[cartData,cartError,dispatch])
+ 
   return (
     <div>
       {/* bannerVideo */}

@@ -11,7 +11,7 @@ import ProductCard from "@/components/ProductCard";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import CarouselComponent from "@/components/Carousel";
 import ShippingAccordion from "@/components/ShippingAccordion";
-import { useAddToOrIncreaseCartMutation, useGetProductDetailsQuery } from "@/redux/services/userReducers";
+import { useAddToOrIncreaseCartMutation, useGetCartQuery, useGetProductDetailsQuery } from "@/redux/services/userReducers";
 import ProductDetailsLoader from "@/components/loaders/ProductDetailsLoader";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { setCart } from "@/redux/reducers/userSlice";
@@ -36,7 +36,8 @@ const page = () => {
   const sizeVariants: Record<string, number> = {"39":5,"40":6,"41": 7, "42": 8, "43": 9, "44": 10}; // Example size mapping
   
   const {data,error,isLoading}=useGetProductDetailsQuery(id);
-  const [addToCart,{isLoading:addToCartLoading,error:addToCartError,data:cartData}]=useAddToOrIncreaseCartMutation();
+  const {data:cartData,refetch}=useGetCartQuery("");
+  const [addToCart]=useAddToOrIncreaseCartMutation();
 
   useEffect(()=>{
     if(data && data.product) {
@@ -63,7 +64,7 @@ const page = () => {
   }));
 
   const addToCarthandler=async ()=>{
-   const {data:cartData,error}=await addToCart({action:"addToCart",product:{
+   const {data:addToCartData,error}=await addToCart({action:"addToCart",product:{
       productId: product?._id,
       name: product?.name,
       quantity,
@@ -71,14 +72,15 @@ const page = () => {
       price: product?.price,
       image: product?.images[0],
     }});
-    console.log(cartData);
-    if(cartData?.success)
+    console.log(addToCartData);
+    if(addToCartData?.success)
     {
-      dispatch(setCart(cartData?.cartItems)); // Dispatch the cart items to the Redux store
-      toast.success(cartData?.message);
+      refetch();
+      dispatch(setCart(cartData?.cartItems?.cartItems)); // Dispatch the cart items to the Redux store
+      toast.success(addToCartData?.message);
     }
     else
-      toast.error(cartData?.message);
+      toast.error(addToCartData?.message);
   }
 
   const onQtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {

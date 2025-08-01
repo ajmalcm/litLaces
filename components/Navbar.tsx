@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LocalMallOutlinedIcon from "@mui/icons-material/LocalMallOutlined";
 import Logo from "@/public/icons/lit_laces.png";
 import MenuIcon from "@/public/icons/menu.svg";
@@ -9,12 +9,18 @@ import Image from "next/image";
 import SideNav from "./SideNav";
 import SearchBar from "@/components/SearchBar";
 import CartDrawer from "@/components/CartDrawer";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useGetCartQuery } from "@/redux/services/userReducers";
+import { setCart } from "@/redux/reducers/userSlice";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const [isSearch, setIsSearch] = useState(false);
   const [isCart, setIsCart] = useState(false);
   const [open, setOpen] = useState(false);
+    const {data:cartData, isLoading:cartLoading, error:cartError} = useGetCartQuery("");
+    const dispatch = useDispatch();
+  
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
@@ -28,6 +34,20 @@ const Navbar = () => {
   };
 
   const { cart } = useSelector((state: any) => state.auth);
+
+   useEffect(()=>{
+    console.log("Cart Data:", cartData);
+    if(cartData && cartData.success) {
+      dispatch(setCart(cartData.cartItems.cartItems));
+    }
+    if(cartError) {
+      if ("data" in cartError) {
+        const errorMessage = (cartError.data as { message: string })?.message;
+        toast.error(errorMessage);
+      }
+    }
+
+  },[cartData,cartError,dispatch])
 
   return (
     <div>

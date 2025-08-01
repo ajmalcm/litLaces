@@ -3,7 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { useAddToOrIncreaseCartMutation, useRemoveFromOrDecreaseCartMutation } from "@/redux/services/userReducers";
+import { useAddToOrIncreaseCartMutation, useGetCartQuery, useRemoveFromOrDecreaseCartMutation } from "@/redux/services/userReducers";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { setCart } from "@/redux/reducers/userSlice";
@@ -27,13 +27,15 @@ export const CartItem = ({
 
   const [increaseMutation] = useAddToOrIncreaseCartMutation();
   const [decreaseMutation] = useRemoveFromOrDecreaseCartMutation();
+  const {data:cartData, refetch} = useGetCartQuery("");
   const dispatch = useDispatch();
 
   const inCreaseQty=async()=>{
     const {data, error} = await increaseMutation({action:"add",product:{productId,quantity:1,size,price,name,image:img}});
     if (data?.success) {
       console.log("Increased quantity successfully:", data);
-      dispatch(setCart(data?.cartItems));
+      refetch();
+            dispatch(setCart(data?.cartItems));
     }
     if (error) {
       console.error("Error increasing quantity:", error);
@@ -44,7 +46,8 @@ export const CartItem = ({
     const {data, error} = await decreaseMutation({productId,action:"minus"});
     if (data?.success) {
       console.log("Decreased quantity successfully:", data);
-            dispatch(setCart(data?.cartItems));
+      refetch();
+            dispatch(setCart(cartData?.cartItems?.cartItems));
     }
     if (error) {
       console.error("Error decreasing quantity:", error);
@@ -55,8 +58,11 @@ export const CartItem = ({
     const {data, error} = await decreaseMutation({productId,action:"removeFromCart"});
     if (data?.success) {
       console.log("Item removed successfully:", data);
-      dispatch(setCart(data?.cartItems));
+      refetch();
+      dispatch(setCart(cartData?.cartItems?.cartItems));
+
       toast.success(data?.message)
+      // refetch();
     }
     if (error) {
       console.error("Error removing item:", error);
