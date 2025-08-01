@@ -10,8 +10,11 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid2";
 import ProductCard from '@/components/ProductCard';
 import { experimentalStyled as styled } from "@mui/material/styles";
+import { useSelector } from 'react-redux';
 
 const CartPage = () => {
+
+  const {cart}=useSelector((state: any) => state.auth);
 
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: "#fff",
@@ -37,11 +40,11 @@ const CartPage = () => {
 
         {/* Cart Item */}
         {
-          ProductsArray.slice(0,4).map((product,index)=>(
-            <Link href={`/products/${product.productName}`} key={index}>
-            <CartItem img={product.img} name={product.productName} price={product.price} size={product.size}/>
-            </Link>
-          ))
+          cart?.map((product:any,index:number)=>(
+                      // <Link href={`/products/${product._id}`} key={index}>
+                      <CartItem key={index} img={product.image} name={product.name} price={product.price} size={product.size} quantity={product.quantity} productId={product?.product}/>
+                      // </Link>
+                    ))
         }
 
         {/* Total Section */}
