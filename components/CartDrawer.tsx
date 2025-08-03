@@ -19,6 +19,7 @@ export default function TopDrawer({
   toggleCart: any;
 }) {
 
+  const [cartTotal, setCartTotal] = React.useState(0);
   const {data:cartData, isLoading:cartLoading, error:cartError} = useGetCartQuery("");
   const {cart}=useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
@@ -37,7 +38,14 @@ export default function TopDrawer({
 
   },[isCart])
 
-
+  React.useEffect(() => {
+    if (cart && cart.length > 0) {
+      const total = cart.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0);
+      setCartTotal(total);
+    } else {
+      setCartTotal(0);
+    }
+  }, [cart]);
  
   const content = (
     <div className=" bg-[#0f0f0f] text-white ">
@@ -61,7 +69,7 @@ export default function TopDrawer({
         <div className="mt-8">
           <div className="flex justify-between items-center text-lg font-bold py-4 border-t border-gray-600">
             <span>Estimated total</span>
-            <span>Rs. 2,699.00</span>
+            <span>Rs. {cartTotal}</span>
           </div>
           <p className="text-gray-400 text-sm mt-1">
             Taxes, discounts and shipping calculated at checkout.

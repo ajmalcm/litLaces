@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { setCart } from "@/redux/reducers/userSlice";
 import Link from "next/link";
+import { PhotoSizeSelectLargeSharp } from "@mui/icons-material";
 
 export const CartItem = ({
   img,
@@ -43,7 +44,7 @@ export const CartItem = ({
   }
 
   const deCreaseQty=async()=>{
-    const {data, error} = await decreaseMutation({productId,action:"minus"});
+    const {data, error} = await decreaseMutation({productId,action:"minus",size});
     if (data?.success) {
       console.log("Decreased quantity successfully:", data);
       refetch();
@@ -55,7 +56,7 @@ export const CartItem = ({
   }
 
   const handleDelete=async()=>{
-    const {data, error} = await decreaseMutation({productId,action:"removeFromCart"});
+    const {data, error} = await decreaseMutation({productId,action:"removeFromCart",size});
     if (data?.success) {
       console.log("Item removed successfully:", data);
       refetch();

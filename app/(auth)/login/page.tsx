@@ -42,7 +42,7 @@ export default function Login() {
 
   useEffect(()=>{
     if(isAuthenticated)
-      navigate.push("/")
+      window.location.href="/";
 
   },[isAuthenticated,navigate])
 

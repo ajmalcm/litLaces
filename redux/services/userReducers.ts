@@ -56,10 +56,10 @@ export const userReducerApi=createApi({
             })
         }),
         removeFromOrDecreaseCart:builder.mutation({
-            query:({productId,action})=>({
+            query:({productId,action,size})=>({
                 url:"user/cart/remove",
                 method:"POST",
-                body:{productId,action},
+                body:{productId,action,size},
             })
         }),
         getAdminAllProducts:builder.query({

@@ -33,7 +33,7 @@ const Navbar = () => {
     setIsCart(newCartopen);
   };
 
-  const { cart } = useSelector((state: any) => state.auth);
+  const { cart ,isAuthenticated} = useSelector((state: any) => state.auth);
 
    useEffect(()=>{
     console.log("Cart Data:", cartData);
@@ -47,7 +47,7 @@ const Navbar = () => {
       }
     }
 
-  },[cartData,cartError,dispatch])
+  },[isAuthenticated,cartData,cartError,dispatch])
 
   return (
     <div>
