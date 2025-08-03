@@ -65,7 +65,7 @@ export default function TopDrawer({
           ))
         }
 
-        {/* Total Section */}
+        {/* Total Section */} 
         <div className="mt-8">
           <div className="flex justify-between items-center text-lg font-bold py-4 border-t border-gray-600">
             <span>Estimated total</span>
