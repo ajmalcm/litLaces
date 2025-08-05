@@ -97,7 +97,7 @@ export const CartItem = ({
             aria-label="decrease quantity"
             onClick={deCreaseQty}
           >
-            <RemoveIcon />
+            <RemoveIcon sx={{color:"white"}}/>
           </IconButton>
           <span className="px-4 text-lg font-semibold text-white">{quantity}</span>
           <IconButton
@@ -106,7 +106,7 @@ export const CartItem = ({
             aria-label="increase quantity"
             onClick={inCreaseQty}
           >
-            <AddIcon />
+            <AddIcon sx={{color:"white"}}/>
           </IconButton>
         </div>
         <IconButton
@@ -115,7 +115,7 @@ export const CartItem = ({
           aria-label="delete item"
           onClick={handleDelete}
         >
-          <DeleteIcon />
+          <DeleteIcon sx={{color:"white"}}/>
         </IconButton>
       </div>
     </div>

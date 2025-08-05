@@ -17,7 +17,7 @@ export default function AccordionTransition() {
 
   return (
     <div>
-      <Accordion className='text-white bg-black py-2' style={{backgroundColor: "#0a0a0a !important", color: "white"}}>
+      <Accordion className=' py-2' sx={{backgroundColor: "#0a0a0a !important", color: "white"}}>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon sx={{color:"white"}}/>}
           aria-controls="panel2-content"
