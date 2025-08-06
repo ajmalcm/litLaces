@@ -3,7 +3,7 @@
 import SummaryProduct from "@/components/SummaryProduct";
 import P1 from "@/public/assets/p2.webp";
 import { ProductsArray } from "@/utils/temp";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 export default function Checkout() {
@@ -23,6 +23,28 @@ export default function Checkout() {
     }
   },[cart])
 
+  const [orderDetails,setDetails]=useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    address: "",
+    city: "",
+    state: "",
+    pinCode: "",
+    phoneNo: "",
+    
+  })
+
+  const { email, firstName, lastName, address, city, state, pinCode, phoneNo } = orderDetails;
+
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="max-w-5xl mx-auto p-6 lg:flex lg:gap-12">
@@ -40,10 +62,14 @@ export default function Checkout() {
             <input
               type="email"
               id="email"
+              name="email"
+              value={email}
+              onChange={onChangeHandler}
+              required
               className="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 text-white focus:ring-2 focus:ring-gray-500 focus:outline-none placeholder-gray-400 text-sm"
               placeholder="Email"
             />
-            <div className="mt-3 flex items-center">
+            {/* <div className="mt-3 flex items-center">
               <input
                 type="checkbox"
                 id="offers"
@@ -52,7 +78,7 @@ export default function Checkout() {
               <label htmlFor="offers" className="ml-2 text-sm text-gray-400">
                 Send me news and exclusive offers
               </label>
-            </div>
+            </div> */}
           </div>
 
           {/* Delivery Section */}
@@ -63,12 +89,20 @@ export default function Checkout() {
             <input
               type="text"
               id="first-name"
+              required
+              name="firstName"
+              value={firstName}
+              onChange={onChangeHandler}
               className="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 text-white focus:ring-2 focus:ring-gray-500 focus:outline-none placeholder-gray-400 text-sm"
               placeholder="First Name"
             />
             <input
               type="text"
               id="last-name"
+              name="lastName"
+              value={lastName}
+              onChange={onChangeHandler}
+              required
               className="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 text-white focus:ring-2 focus:ring-gray-500 focus:outline-none placeholder-gray-400 text-sm"
               placeholder="Last Name"
             />
@@ -76,6 +110,11 @@ export default function Checkout() {
           <div className="mt-6">
             <input
               type="text"
+              required
+              minLength={10}
+              name="address"
+              value={address}
+              onChange={onChangeHandler}
               id="address"
               className="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 text-white focus:ring-2 focus:ring-gray-500 focus:outline-none placeholder-gray-400 text-sm"
               placeholder="Address"
@@ -84,6 +123,9 @@ export default function Checkout() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
             <select
               id="state"
+              name="state"
+              value={state}
+              onChange={onChangeHandler}
               className="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 text-white focus:ring-2 focus:ring-gray-500 focus:outline-none text-sm"
             >
               <option>Karnataka</option>
@@ -92,20 +134,33 @@ export default function Checkout() {
             <input
               type="text"
               id="city"
+              required
+              name="city"
+              value={city}
+              onChange={onChangeHandler}
               className="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 text-white focus:ring-2 focus:ring-gray-500 focus:outline-none placeholder-gray-400 text-sm"
               placeholder="City"
             />
             <input
               type="text"
               id="zip"
+              required
+              name="pinCode"
+              value={pinCode}
+              onChange={onChangeHandler}
               className="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 text-white focus:ring-2 focus:ring-gray-500 focus:outline-none placeholder-gray-400 text-sm"
               placeholder="ZIP Code"
             />
           </div>
           <div className="mt-6">
             <input
+              required
               type="tel"
               id="phone"
+              name="phoneNo"
+              value={phoneNo}
+              onChange={onChangeHandler}
+              pattern="[0-9]{10}"
               className="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 text-white focus:ring-2 focus:ring-gray-500 focus:outline-none placeholder-gray-400 text-sm"
               placeholder="Phone Number"
             />
@@ -148,4 +203,4 @@ export default function Checkout() {
       </div>
     </div>
   );
-}
+  }

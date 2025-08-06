@@ -44,7 +44,7 @@ const OrderSchema = new Schema(
     paymentInfo: {
       method: {
         type: String,
-        enum: ["UPI", "Card", "Netbanking", "Wallet", "COD"],
+        enum: ["UPI", "Card", "COD"],
         required: true,
       },
       razorpayOrderId: { type: String },
