@@ -62,14 +62,23 @@ export const userReducerApi=createApi({
                 body:{productId,action,size},
             })
         }),
+        orderPayment:builder.mutation({
+            query:(amount)=>({
+                url:"order/payment",
+                method:"POST",
+                body:{amount},
+                keepUnusedDataFor:0,
+            }),
+    }), // disables caching
         getAdminAllProducts:builder.query({
             query:()=>"admin/allProducts",
         }),
         getAdminAllUsers:builder.query({
             query:()=>"admin/allUsers",
-        })
+        }),
+
     })
 
 })
 
-export const {useLoadUserQuery,useRegisterUserMutation,useLoginUserMutation,useLogoutuserMutation,useGetProductsQuery,useGetProductDetailsQuery,useGetAdminAllProductsQuery,useGetAdminAllUsersQuery,useGetCartQuery,useAddToOrIncreaseCartMutation,useRemoveFromOrDecreaseCartMutation}=userReducerApi
+export const {useLoadUserQuery,useRegisterUserMutation,useLoginUserMutation,useLogoutuserMutation,useGetProductsQuery,useGetProductDetailsQuery,useGetAdminAllProductsQuery,useGetAdminAllUsersQuery,useGetCartQuery,useAddToOrIncreaseCartMutation,useRemoveFromOrDecreaseCartMutation,useOrderPaymentMutation}=userReducerApi

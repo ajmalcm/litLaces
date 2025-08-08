@@ -14,8 +14,13 @@ import { setAdmin, setAuthenticated, setCart } from "@/redux/reducers/userSlice"
 import { toast } from "sonner";
 import Gif from "@/public/assets/phoneGif.gif";
 import Bgif from "@/public/assets/bbgif.gif";
-
 import Image from "next/image";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 const Home = () => {
   const { isLoading, data, error } = useLoadUserQuery("");
