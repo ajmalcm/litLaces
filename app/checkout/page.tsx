@@ -275,7 +275,7 @@ export default function Checkout() {
           </div>
           <div className="flex justify-between mb-4 text-gray-300 text-sm">
             <p>Shipping</p>
-            <p className="text-gray-500">Enter address</p>
+            <p className="text-gray-500">{shippingCost}</p>
           </div>
           <hr className="border-gray-700 mb-6" />
           <div className="flex justify-between text-lg font-semibold text-gray-100">

@@ -74,15 +74,15 @@ export default function TopDrawer({
           <p className="text-gray-400 text-sm mt-1">
             Taxes, discounts and shipping calculated at checkout.
           </p>
+          <Link href="/checkout" onClick={toggleCart(false)}>
           <Button
             variant="contained"
             fullWidth
             className="mt-6 bg-gray-100 text-black hover:bg-gray-300"
           >
-            <Link href="/checkout" onClick={toggleCart(false)}>
             Check out
-            </Link>
           </Button>
+            </Link>
         </div>
       </div>
     </div>

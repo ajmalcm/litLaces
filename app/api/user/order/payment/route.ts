@@ -23,6 +23,6 @@ export const POST=async(req:NextRequest)=>{
     }
     catch(err){
         console.error("Error creating Razorpay order:", err);
-        return NextResponse.json({error:"Failed to create order"}, {status:500});
+        return NextResponse.json({error:"Failed to create razorpay payment order"}, {status:500});
     }
 }

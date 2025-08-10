@@ -15,6 +15,14 @@ const OrderSchema = new Schema(
           ref: "Sneaker",
           required: true,
         },
+        name: {
+          type: String,
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
         quantity: {
           type: Number,
           required: true,
@@ -23,8 +31,8 @@ const OrderSchema = new Schema(
           type: String,
           required: true,
         },
-        price: {
-          type: Number,
+        image: {
+          type: String,
           required: true,
         },
       },
@@ -42,19 +50,28 @@ const OrderSchema = new Schema(
     },
 
     paymentInfo: {
-      method: {
+      id: {
         type: String,
-        enum: ["UPI", "Card", "COD"],
         required: true,
       },
-      razorpayOrderId: { type: String },
-      razorpayPaymentId: { type: String },
-      paymentStatus: {
+      status: {
         type: String,
-        enum: ["Pending", "Success", "Failed"],
-        default: "Pending",
+        required: true,
       },
-      paidAt: { type: Date },
+    },
+
+    paidAt: {
+      type: Date,
+      required: true,
+    },
+    itemsPrice:{
+      type:String,
+      required:true
+    },
+
+    shippingPrice:{
+      type:Number,
+      required:true
     },
 
     totalAmount: {
@@ -80,4 +97,5 @@ const OrderSchema = new Schema(
   { timestamps: true }
 );
 
-export const Order = mongoose.models.Order || mongoose.model("Order", OrderSchema);
+export const Order =
+  mongoose.models.Order || mongoose.model("Order", OrderSchema);
