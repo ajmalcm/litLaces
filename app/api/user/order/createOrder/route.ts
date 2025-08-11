@@ -3,7 +3,7 @@ import { connectDB } from "@/lib/db/connection";
 import { Order } from "@/lib/db/models/order.model";
 import { isAuthenticatedUser } from "@/lib/middleware/auth";
 
-export const POST=async(req:NextRequest,res:NextResponse)=>{
+export const POST=async(req:NextRequest)=>{
     try{
         await connectDB();
         const user=await isAuthenticatedUser(req);
@@ -34,7 +34,8 @@ export const POST=async(req:NextRequest,res:NextResponse)=>{
         console.log("error at /api/user/order/createOrder/route")
         return NextResponse.json({
             success:false,
-            message:"error placing order."
+            message:"error placing order.",
+            error
         },{status:501})
     }
 }

@@ -4,8 +4,13 @@ import SummaryProduct from "@/components/SummaryProduct";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { State, City } from "country-state-city";
-import { useOrderPaymentMutation } from "@/redux/services/userReducers";
+import {
+  useOrderPaymentMutation,
+  usePlaceOrderMutation,
+} from "@/redux/services/userReducers";
 import Script from "next/script";
+import { toast } from "sonner";
+import { siLK } from "@mui/material/locale";
 
 export default function Checkout() {
   const { cart } = useSelector((state: any) => state.auth);
@@ -13,6 +18,7 @@ export default function Checkout() {
   const [shippingCost, setShippingCost] = useState<number>(0);
   const allStates = State.getStatesOfCountry("IN");
   const [allCities, setAllCities] = useState([{ name: "", isoCode: "" }]);
+  const [paymentInfo, setPaymentInfo] = useState({ id: "", status: "" });
 
   useEffect(() => {
     if (cart && cart.length > 0) {
@@ -28,7 +34,7 @@ export default function Checkout() {
     }
   }, [cart]);
 
-  const [orderDetails, setDetails] = useState({
+  const [shippingDetails, setShippingDetails] = useState({
     email: "",
     firstName: "",
     lastName: "",
@@ -41,15 +47,16 @@ export default function Checkout() {
 
   const [processing, setProcessing] = useState<boolean>(false);
   const [orderPaymentMutation] = useOrderPaymentMutation();
+  const [placeOrderMutation] = usePlaceOrderMutation();
 
   const { email, firstName, lastName, address, city, state, pinCode, phoneNo } =
-    orderDetails;
+    shippingDetails;
 
   const onChangeHandler = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setDetails((prevDetails) => ({
+    setShippingDetails((prevDetails) => ({
       ...prevDetails,
       [name]: value,
     }));
@@ -63,19 +70,53 @@ export default function Checkout() {
         amount: totalPrice + shippingCost,
       });
 
-
-
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "",
-        amount: (totalPrice+shippingCost )* 100, // Amount in paise
+        amount: (totalPrice + shippingCost) * 100, // Amount in paise
         currency: "INR",
         name: "LIT LACES",
         description: "Order Payment",
         order_id: data?.id,
-        handler: (response: any) => {
+        handler: async (response: any) => {
           console.log("Payment successful:", response);
           // Handle successful payment here
           setProcessing(false);
+          if (data?.id === response?.razorpay_order_id && data?.success) {
+            setPaymentInfo({
+              id: response?.razorpay_payment_id,
+              status: "success",
+            });
+            const isPaid = true;
+            const orderItems = cart.map((item: any) => ({
+              product: item.product,
+              quantity: item.quantity,
+              price: item.price,
+              name: item.name,
+              image: item.image.url,
+              size: item.size,
+            }));
+            const shippingInfo = shippingDetails;
+            const itemsPrice = totalPrice;
+            const shippingPrice = shippingCost;
+            const totalAmount = totalPrice + shippingCost;
+            const { data, error } = await placeOrderMutation({
+              orderItems,
+              shippingInfo,
+              paymentInfo,
+              isPaid,
+              itemsPrice,
+              shippingPrice,
+              totalAmount,
+            });
+            if (data && data?.success) {
+              toast.success(data?.message);
+            }
+            if(error && "message" in error ){
+              toast.error(error?.message);
+            }
+          } else {
+            console.log("payment failed");
+          }
           // Optionally, redirect or show success message
         },
         prefill: {
@@ -96,12 +137,13 @@ export default function Checkout() {
       // Handle error (e.g., show error message)
     } finally {
       setProcessing(false);
+      setPaymentInfo({ id: "", status: "" });
     }
   };
 
   useEffect(() => {
     const selectedState = allStates.find(
-      (state) => state.isoCode === orderDetails.state
+      (state) => state.isoCode === shippingDetails.state
     );
     if (selectedState) {
       const cities = City.getCitiesOfState("IN", selectedState.isoCode);
@@ -110,7 +152,10 @@ export default function Checkout() {
   }, [state]);
 
   return (
-    <form className="min-h-screen bg-black text-white" onSubmit={onSubmitHandler}>
+    <form
+      className="min-h-screen bg-black text-white"
+      onSubmit={onSubmitHandler}
+    >
       <Script
         src="https://checkout.razorpay.com/v1/checkout.js"
         onLoad={() => console.log("Razorpay script loaded")}
@@ -288,7 +333,7 @@ export default function Checkout() {
             className="mt-8 w-full p-4 bg-gray-800 hover:bg-gray-700 rounded-lg text-white font-medium shadow-lg focus:outline-none transition-transform duration-300 hover:scale-105"
             type="submit"
             disabled={processing}
-            >
+          >
             {processing ? "Processing..." : "Complete Payment"}
           </button>
         </div>
