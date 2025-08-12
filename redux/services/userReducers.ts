@@ -97,6 +97,12 @@ export const userReducerApi = createApi({
         keepUnusedDataFor: 0,
       }),
     }),
+    getMyOrders: builder.query({
+      query: () => "user/order/myOrders"
+    }),
+    getOrderDetails: builder.query({
+      query: ({id}) => `user/order/orderDetails/${id}`
+    }),
     getAdminAllProducts: builder.query({
       query: () => "admin/allProducts",
     }),
@@ -120,4 +126,6 @@ export const {
   useRemoveFromOrDecreaseCartMutation,
   useOrderPaymentMutation,
   usePlaceOrderMutation,
+  useGetMyOrdersQuery,
+  useGetOrderDetailsQuery
 } = userReducerApi;

@@ -1,10 +1,15 @@
+
+"use client";
 import React from "react";
-import Image from "next/image";
 import { orders } from "@/utils/temp";
-import Link from "next/link";
 import OrderProductCard from "@/components/OrderProductCard";
+import { useGetMyOrdersQuery } from "@/redux/services/userReducers";
 
 export default function MyOrders() {
+
+  const {data}=useGetMyOrdersQuery("");
+  console.log(data);
+
   return (
     <div className="min-h-screen bg-black text-white p-6">
       <div className="max-w-5xl mx-auto">

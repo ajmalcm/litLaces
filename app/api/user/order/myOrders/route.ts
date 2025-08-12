@@ -12,7 +12,7 @@ export const GET=async(req:NextRequest)=>{
             return NextResponse.json({message:"Please login to access User data.",success:false},{status:401});
         }
 
-        const orders=await Order.find({user:user.id}).populate("products.product").sort({createdAt:-1})
+        const orders=await Order.find({user:user.id}).sort({createdAt:-1})
         return NextResponse.json({orders,success:true},{status:200})
     }
     catch(err){
