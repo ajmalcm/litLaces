@@ -37,7 +37,8 @@ const SideNav = ({
       item: isAuthenticated ? "Log-Out" : "Log-in",
       link: isAuthenticated ? "/" : "/login",
     },
-    { item: "admin", link: "/admin" },
+    { item: "My Orders", link: "/orders" },
+    isAdmin && { item: "admin", link: "/admin" },
   ];
 
   const logoutHandler = async (text: string) => {
