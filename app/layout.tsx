@@ -7,6 +7,7 @@ import SideNav from "@/components/SideNav";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
 import { Toaster } from "@/components/ui/sonner";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 
 const geistSans = localFont({
@@ -39,6 +40,7 @@ export default function RootLayout({
        <Navbar/>
        <div className="bg-black">
         {children}
+        <SpeedInsights />
         <Toaster className="!bg-gray-800 !text-white"/>
        </div>
        <Footer/>
