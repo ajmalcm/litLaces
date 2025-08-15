@@ -2,7 +2,7 @@
 "use client";
 import React from "react";
 import OrderProductCard from "@/components/OrderProductCard";
-import MyOrdersSkeleton from "@/components/loaders/ordersLoading";
+import MyOrdersSkeleton from "@/components/loaders/OrderDetailsLoader";
 import { useGetMyOrdersQuery } from "@/redux/services/userReducers";
 
 export default function MyOrders() {
