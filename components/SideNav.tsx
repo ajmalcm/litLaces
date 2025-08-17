@@ -29,17 +29,17 @@ const SideNav = ({
   const dispatch = useDispatch();
 
   const navLinks = [
-    { item: "Home", link: "/" },
-    { item: "Shop Men", link: "/collections/Men" },
-    { item: "Shop Women", link: "/collections/Women" },
-    { item: "Shop All", link: "/collections/all" },
-    {
-      item: isAuthenticated ? "Log-Out" : "Log-in",
-      link: isAuthenticated ? "/" : "/login",
-    },
-    { item: "My Orders", link: "/orders" },
-    isAdmin && { item: "admin", link: "/admin" },
-  ];
+  { item: "Home", link: "/" },
+  { item: "Shop Men", link: "/collections/Men" },
+  { item: "Shop Women", link: "/collections/Women" },
+  { item: "Shop All", link: "/collections/all" },
+  {
+    item: isAuthenticated ? "Log-Out" : "Log-in",
+    link: isAuthenticated ? "/" : "/login",
+  },
+  { item: "My Orders", link: "/orders" },
+  ...(isAdmin ? [{ item: "admin", link: "/admin" }] : []),
+];
 
   const logoutHandler = async (text: string) => {
     try {
@@ -91,7 +91,7 @@ const SideNav = ({
       <nav className="flex-1 mt-2 font-mono">
         <List>
           {navLinks.map((text, index) => (
-            <ListItem key={text.item} disablePadding>
+            <ListItem key={index} disablePadding>
               <ListItemButton
                 onClick={() =>
                   text.item === "Log-Out"

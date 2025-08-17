@@ -134,14 +134,14 @@ const AllUsers = () => {
         maxWidth: "100vw",
       }}
     >
-      <Typography
+      {/* <Typography
         variant="h4"
         component="h1"
         gutterBottom
         sx={{ color: "white", py: 2 }}
       >
         All Users
-      </Typography>
+      </Typography> */}
       <Box sx={{ mb: 4 }}>
         <TextField
           label="Search by Name"

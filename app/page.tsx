@@ -104,9 +104,9 @@ const Home = () => {
         <HomeAbout />
       </div> */}
 
-      <div className="flex justify-center items-center text-white mx-5 border-t-[1px] border-[#434343]">
+      {/* <div className="flex justify-center items-center text-white mx-5 border-t-[1px] border-[#434343]">
         <EmailSection />
-      </div>
+      </div> */}
     </div>
   );
 };

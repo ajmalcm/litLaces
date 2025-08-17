@@ -153,14 +153,14 @@ const AllProducts = () => {
         maxWidth: "100vw",
       }}
     >
-      <Typography
+      {/* <Typography
         variant="h4"
         component="h1"
         gutterBottom
         sx={{ color: "white", py: 2 }}
       >
         All Products
-      </Typography>
+      </Typography> */}
       <Box
         sx={{
           display: "flex",

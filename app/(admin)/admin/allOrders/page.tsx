@@ -1,54 +1,81 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   Box,
-  Typography,
   IconButton,
   useMediaQuery,
   Chip,
 } from "@mui/material";
 import { Visibility, Delete } from "@mui/icons-material";
-import { mockOrders } from "@/utils/temp";
+import { useGetAdminAllOrdersQuery } from "@/redux/services/userReducers";
+import { useRouter } from "next/navigation";
 
 const AllOrders = () => {
-  const [orders, setOrders] = useState(mockOrders);
+  const [orders, setOrders] = useState<any[]>([]);
+  const { data } = useGetAdminAllOrdersQuery("");
+  console.log(data);
+  const navigate=useRouter();
+
+  useEffect(() => {
+    if (Array.isArray(data)) {
+      setOrders(data);
+    }
+  }, [data]);
 
   // Responsive breakpoint
   const isMobile = useMediaQuery("(max-width:600px)");
 
   // Delete Handler
-  const handleDelete = (id:any) => {
+  const handleDelete = (id: string) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this order?");
     if (confirmDelete) {
-      setOrders((prev) => prev.filter((order) => order.id !== id));
+      setOrders((prev) => prev.filter((order) => order._id !== id));
     }
   };
 
   // DataGrid Columns
   const columns = [
-    { field: "id", headerName: "Order ID", width: 80 },
-    { field: "customer", headerName: "Customer", flex: 1 },
-    { field: "orderDate", headerName: "Order Date", width: 150 },
+    { field: "_id", headerName: "Order ID", width: 200 },
+    {
+      field: "customer",
+      headerName: "Customer",
+      flex: 1,
+      renderCell: (params: any) => params?.row?.user?.name ?? "N/A", // ✅ safe check
+    },
+    {
+      field: "createdAt",
+      headerName: "Order Date",
+      width: 180,
+      renderCell: (params: any) =>
+        params?.row?.createdAt
+          ? new Date(params.row.createdAt).toLocaleString()
+          : "N/A", // ✅ safe check
+    },
     {
       field: "totalAmount",
       headerName: "Total Amount",
       width: 150,
-      renderCell: (params:any) => `₹${params.value}`,
+      renderCell: (params: any) => `₹${params.row?.totalAmount ?? 0}`, // ✅ use row
     },
-    { field: "items", headerName: "Items", width: 100 },
     {
-      field: "status",
+      field: "items",
+      headerName: "Items",
+      width: 100,
+      renderCell: (params: any) => params?.row?.orderItems?.length ?? 0, // ✅ safe check
+    },
+    {
+      field: "deliveryStatus",
       headerName: "Status",
       width: 120,
-      renderCell: (params:any) => (
+      renderCell: (params: any) => (
         <Chip
-          label={params.value}
+          label={params.row?.deliveryStatus ?? "Unknown"} // ✅ safe check
           color={
-            params.value === "Delivered"
+            params.row?.deliveryStatus === "Delivered"
               ? "success"
-              : params.value === "Pending"
+              : params.row?.deliveryStatus === "Pending"
               ? "warning"
               : "primary"
           }
@@ -61,19 +88,19 @@ const AllOrders = () => {
       headerName: "Actions",
       width: isMobile ? 100 : 180,
       sortable: false,
-      renderCell: (params:any) => (
+      renderCell: (params: any) => (
         <Box sx={{ display: "flex", gap: 1 }}>
           <IconButton
             color="primary"
             size="small"
-            onClick={() => alert(`View Order ${params.row.id}`)}
+            onClick={() => navigate.push(`/admin/allOrders/${params?.row?._id}`)} // ✅ fixed
           >
             <Visibility />
           </IconButton>
           <IconButton
             color="error"
             size="small"
-            onClick={() => handleDelete(params.row.id)}
+            onClick={() => handleDelete(params.row?._id)} // ✅ fixed
           >
             <Delete />
           </IconButton>
@@ -93,17 +120,6 @@ const AllOrders = () => {
         maxWidth: "100vw",
       }}
     >
-      {/* Header */}
-      <Typography
-        variant="h4"
-        component="h1"
-        gutterBottom
-        sx={{ color: "white", py: 2 }}
-      >
-        All Orders
-      </Typography>
-
-      {/* DataGrid */}
       <Box
         sx={{
           height: 500,
@@ -114,6 +130,7 @@ const AllOrders = () => {
         }}
       >
         <DataGrid
+          getRowId={(row) => row._id} // ✅ no need to map id manually
           rows={orders}
           columns={columns}
           initialState={{
@@ -145,7 +162,7 @@ const AllOrders = () => {
               color: "#fff",
             },
             "& .MuiSvgIcon-root": {
-              color: "#ccc", // Icon color
+              color: "#ccc",
             },
             "& .MuiDataGrid-row": {
               backgroundColor: "rgb(31 41 55)",

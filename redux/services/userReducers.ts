@@ -109,6 +109,17 @@ export const userReducerApi = createApi({
     getAdminAllUsers: builder.query({
       query: () => "admin/allUsers",
     }),
+    getAdminAllOrders:builder.query({
+      query:()=> "admin/allOrders"
+    }),
+    updateOrderStatus:builder.mutation({
+      query:({id,status})=>({
+        url:`admin/allOrders/update/${id}`,
+        body:{status},
+        method:"POST",
+        keepUnusedDataFor:0,
+      })
+    })
   }),
 });
 
@@ -127,5 +138,7 @@ export const {
   useOrderPaymentMutation,
   usePlaceOrderMutation,
   useGetMyOrdersQuery,
-  useGetOrderDetailsQuery
+  useGetOrderDetailsQuery,
+  useGetAdminAllOrdersQuery,
+  useUpdateOrderStatusMutation
 } = userReducerApi;
