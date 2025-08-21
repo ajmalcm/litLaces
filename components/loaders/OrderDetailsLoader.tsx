@@ -2,7 +2,7 @@ import React from "react";
 
 const OrderDetailsSkeletonLoader = () => {
   return (
-    <div className="min-h-screen bg-black text-white p-6 animate-pulse">
+    <div className="min-h-screen bg-black text-white p-6 animate-pulse flex-1">
       <div className="max-w-5xl mx-auto">
         {/* Page Title */}
         <div className="h-8 bg-gray-800 w-1/2 mb-6 rounded"></div>

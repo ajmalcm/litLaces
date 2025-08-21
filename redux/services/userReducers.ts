@@ -6,28 +6,36 @@ export const userReducerApi = createApi({
     baseUrl: "/api/",
     credentials: "include",
   }),
+  tagTypes: ["User", "Product", "Cart", "Order", "Admin"], // ✅ declare tags
   endpoints: (builder) => ({
     loadUser: builder.query({
       query: () => "user/me",
-      keepUnusedDataFor: 0, // disables caching
+      providesTags: ["User"], // ✅ provides user data
     }),
+
     registerUser: builder.mutation({
       query: (userData) => ({
         url: "user/register",
         method: "POST",
         body: userData,
-        keepUnusedDataFor: 0, // disables caching
       }),
+      invalidatesTags: ["User"], // ✅ refresh user after register
     }),
+
     loginUser: builder.mutation({
       query: (credentials) => ({
         url: "user/login",
         method: "POST",
         body: credentials,
-        keepUnusedDataFor: 0, // disables caching
       }),
+      invalidatesTags: ["User"], // ✅ refresh after login
     }),
-    logoutuser: builder.mutation({ query: () => "user/logout" }),
+
+    logoutuser: builder.mutation({
+      query: () => "user/logout",
+      invalidatesTags: ["User", "Cart", "Order"], // ✅ clear all user-related caches
+    }),
+
     getProducts: builder.query({
       query: ({ id = "", keyword = "", page = 1, gte = 0, lte = 10000 }) => {
         let url = `products`;
@@ -42,84 +50,87 @@ export const userReducerApi = createApi({
         if (param.length > 0) url += `?${param.join("&")}`;
         return url;
       },
+      providesTags: ["Product"], // ✅ cache by tag
     }),
+
     getProductDetails: builder.query({
       query: (id) => `products/details/${id}`,
-      keepUnusedDataFor: 0, // disables caching
+      providesTags: ["Product"],
     }),
+
     getCart: builder.query({
       query: () => "user/cart",
-      keepUnusedDataFor: 0, // disables caching
+      providesTags: ["Cart"],
     }),
+
     addToOrIncreaseCart: builder.mutation({
       query: ({ action, product }) => ({
         url: "user/cart/add",
         method: "POST",
         body: { action, product },
       }),
+      invalidatesTags: ["Cart"], // ✅ refetch cart
     }),
+
     removeFromOrDecreaseCart: builder.mutation({
       query: ({ productId, action, size }) => ({
         url: "user/cart/remove",
         method: "POST",
         body: { productId, action, size },
       }),
+      invalidatesTags: ["Cart"], // ✅ refetch cart
     }),
+
     orderPayment: builder.mutation({
       query: ({ amount }) => ({
         url: "user/order/payment",
         method: "POST",
         body: { amount },
-        keepUnusedDataFor: 0,
       }),
-    }), // disables caching
+    }),
+
     placeOrder: builder.mutation({
-      query: ({
-        orderItems,
-        shippingInfo,
-        paymentInfo,
-        itemsPrice,
-        shippingPrice,
-        totalAmount,
-        isPaid,
-      }) => ({
+      query: (orderData) => ({
         url: "user/order/createOrder",
         method: "POST",
-        body: {
-          orderItems,
-          shippingInfo,
-          paymentInfo,
-          itemsPrice,
-          shippingPrice,
-          totalAmount,
-          isPaid,
-        },
-        keepUnusedDataFor: 0,
+        body: orderData,
       }),
+      invalidatesTags: ["Order", "Cart"], // ✅ refresh orders & cart
     }),
+
     getMyOrders: builder.query({
-      query: () => "user/order/myOrders"
+      query: () => "user/order/myOrders",
+      providesTags: ["Order"],
     }),
+
     getOrderDetails: builder.query({
-      query: ({id}) => `user/order/orderDetails/${id}`
+      query: ({ id }) => `user/order/orderDetails/${id}`,
+      providesTags: ["Order"],
     }),
+
     getAdminAllProducts: builder.query({
       query: () => "admin/allProducts",
+      providesTags: ["Admin", "Product"],
     }),
+
     getAdminAllUsers: builder.query({
       query: () => "admin/allUsers",
+      providesTags: ["Admin", "User"],
     }),
-    getAdminAllOrders:builder.query({
-      query:()=> "admin/allOrders"
+
+    getAdminAllOrders: builder.query({
+      query: () => "admin/allOrders",
+      providesTags: ["Admin", "Order"],
     }),
-    updateOrderStatus:builder.mutation({
-      query:({id,status})=>({
-        url:`admin/allOrders/update/${id}`,
-        body:{status},
-        method:"POST",
-        keepUnusedDataFor:0,
-      })
-    })
+
+    updateOrderStatus: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `admin/allOrders/update/${id}`,
+        body: { status },
+        method: "POST",
+      }),
+      invalidatesTags: ["Order", "Admin"], // ✅ refresh orders after update
+    }),
   }),
 });
 
@@ -140,5 +151,5 @@ export const {
   useGetMyOrdersQuery,
   useGetOrderDetailsQuery,
   useGetAdminAllOrdersQuery,
-  useUpdateOrderStatusMutation
+  useUpdateOrderStatusMutation,
 } = userReducerApi;

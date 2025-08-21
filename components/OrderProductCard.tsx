@@ -2,6 +2,8 @@ import Link from "next/link";
 import React from "react";
 
 const OrderProductCard = ({ order, page }: { order: any; page: string }) => {
+
+
   return (
     <div className="bg-gray-900 p-6 rounded-xl shadow-xl mb-6 border border-gray-800">
       {/* Order Details */}
@@ -23,7 +25,7 @@ const OrderProductCard = ({ order, page }: { order: any; page: string }) => {
         <div className="text-right">
           <p
             className={`text-lg text-left font-medium ${
-              order.status === "Delivered" ? "text-green-600" : "text-red-700"
+              order?.deliveryStatus ==="Delivered" ? "text-green-600" : order?.deliveryStatus==="Shipped"? "text-sky-600":"text-red-700"
             } `}
           >
             {order.deliveryStatus}

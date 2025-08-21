@@ -14,7 +14,6 @@ export const POST=async(req:NextRequest,{params}:{params:Promise<{id:String}>})=
             return NextResponse.json({success:false,message:"Order Not Found"});
         }
         return NextResponse.json({success:true,message:'OrderStatus Updated',order})
-        // const user=await isAuthenticatedUser(req);
 
     }
     catch(error)
