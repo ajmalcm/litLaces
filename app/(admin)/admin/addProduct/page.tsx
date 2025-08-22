@@ -2,38 +2,60 @@
 
 import { useState } from "react";
 import { Cancel } from "@mui/icons-material";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
     name: "",
     category: "",
     price: "",
-    stock: "",
     gender: "",
     description: "",
     images: [] as any,
+    sizes: [] as { size: string; stock: number }[], // 👈 sizes with stock
   });
 
-  const handleChange = (e:any) => {
+  const sizes = ["36", "37", "38", "39", "40", "41", "42", "43", "44"];
+
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleImageChange = (e:any) => {
+  const handleImageChange = (e: any) => {
     const files = Array.from(e.target.files);
-    const newImages = files.map((file:any) => ({
+    const newImages = files.map((file: any) => ({
       file,
       preview: URL.createObjectURL(file),
     }));
     setFormData({ ...formData, images: [...formData.images, ...newImages] });
   };
 
-  const removeImage = (index:number) => {
-    const updatedImages = formData.images.filter((_:any, i:any) => i !== index);
+  const removeImage = (index: number) => {
+    const updatedImages = formData.images.filter(
+      (_: any, i: any) => i !== index
+    );
     setFormData({ ...formData, images: updatedImages });
   };
 
-  const handleSubmit = (e:any) => {
+  const handleSizeChange = (_: any, newSizes: string[]) => {
+    const updated = newSizes.map((s) => {
+      const existing = formData.sizes.find((item) => item.size === s);
+      return existing || { size: s, stock: 0 };
+    });
+    setFormData({ ...formData, sizes: updated });
+  };
+
+  const handleStockChange = (size: string, stock: number) => {
+    const updated = formData.sizes.map((item) =>
+      item.size === size ? { ...item, stock } : item
+    );
+    setFormData({ ...formData, sizes: updated });
+  };
+
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log("Form submitted", formData);
     // Add API integration to save product details
@@ -111,6 +133,74 @@ const AddProduct = () => {
             </select>
           </div>
 
+          {/* Sizes with Stock */}
+          <div>
+            <Autocomplete
+              multiple
+              disableCloseOnSelect
+              options={sizes}
+              value={formData.sizes.map((s) => s.size)}
+              onChange={handleSizeChange}
+              getOptionLabel={(option) => option}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    variant="outlined"
+                    sx={{
+                      color: "white",
+                      borderColor: "white",
+                      "& .MuiChip-deleteIcon": {
+                        color: "white",
+                      },
+                    }}
+                    label={option}
+                    {...getTagProps({ index })}
+                  />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Sizes"
+                  sx={{
+                    "& .MuiInputLabel-root": { color: "white" },
+                    "& .MuiInputLabel-root.Mui-focused": { color: "white" },
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": { borderColor: "white" },
+                      "&:hover fieldset": { borderColor: "white" },
+                      "&.Mui-focused fieldset": { borderColor: "white" },
+                      "& input": { color: "white" },
+                    },
+                  }}
+                />
+              )}
+            />
+          </div>
+
+          {/* Stock inputs per size */}
+          {formData.sizes.length > 0 && (
+            <div className="space-y-2">
+              <label htmlFor="stock" className="block text-gray-300 font-medium">
+              Stock per size
+            </label>
+              {formData.sizes.map((item) => (
+                <div key={item.size} className="flex items-center gap-4">
+                  <span className="text-gray-200 w-12">{item.size}</span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={item.stock}
+                    onChange={(e) =>
+                      handleStockChange(item.size, Number(e.target.value))
+                    }
+                    placeholder="Stock"
+                    className="flex-1 p-2 bg-gray-700 text-gray-100 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Price */}
           <div>
             <label htmlFor="price" className="block text-gray-300 font-medium">
@@ -123,23 +213,6 @@ const AddProduct = () => {
               value={formData.price}
               onChange={handleChange}
               placeholder="Enter price"
-              className="w-full mt-1 p-2 bg-gray-700 text-gray-100 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          {/* Stock */}
-          <div>
-            <label htmlFor="stock" className="block text-gray-300 font-medium">
-              Stock Quantity
-            </label>
-            <input
-              type="number"
-              id="stock"
-              name="stock"
-              value={formData.stock}
-              onChange={handleChange}
-              placeholder="Enter stock quantity"
               className="w-full mt-1 p-2 bg-gray-700 text-gray-100 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -185,7 +258,7 @@ const AddProduct = () => {
           <div className="mt-4">
             {formData.images.length > 0 && (
               <div className="flex flex-wrap gap-4">
-                {formData.images.map((img:any, index:number) => (
+                {formData.images.map((img: any, index: number) => (
                   <div
                     key={index}
                     className="relative w-20 h-20 rounded overflow-hidden"
