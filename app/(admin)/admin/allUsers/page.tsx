@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import { useGetAdminAllUsersQuery } from "@/redux/services/userReducers";
-import UpdateUserData from "@/components/updateUserData";
+import UpdateUserData from "@/components/UpdateUserData";
 
 type UserType = {
   _id: string;
@@ -32,6 +32,7 @@ const AllUsers = () => {
   const [search, setSearch] = useState("");
   const [deletedIds, setDeletedIds] = useState<string[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [userId,setUserId]=useState<string>("");
   const isMobile = useMediaQuery("(max-width:600px)");
 
   // Filter out deleted users
@@ -103,7 +104,7 @@ const AllUsers = () => {
               color: "#007BFF",
               "&:hover": { color: "#0056b3" },
             }}
-            onClick={() => setShowModal(true)}
+            onClick={() => {  setShowModal(true); setUserId(params.row.id)}}
           >
             <Edit />
           </IconButton>
@@ -215,7 +216,7 @@ const AllUsers = () => {
         showModal &&
         <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-full h-full'>
 
-          <UpdateUserData showModal={showModal} setShowModal={setShowModal} />
+          <UpdateUserData showModal={showModal} setShowModal={setShowModal} id={userId}/>
         </div>
       }
     </Box>

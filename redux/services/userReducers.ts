@@ -131,6 +131,20 @@ export const userReducerApi = createApi({
       }),
       invalidatesTags: ["Order", "Admin"], // ✅ refresh orders after update
     }),
+
+    getUserDetails: builder.query({
+      query: (id) => `admin/allUsers/${id}`,
+      providesTags: ["User", "Admin"],
+    }),
+
+    updateUser:builder.mutation({
+      query:({id,name,email,phone,role})=>({
+        url:"admin/allUsers/update",
+        method:"POST",
+        body:{id,name,email,phone,role}
+      }),
+      invalidatesTags:["User","Admin"] // ✅ refresh users after update
+    })
   }),
 });
 
@@ -152,4 +166,6 @@ export const {
   useGetOrderDetailsQuery,
   useGetAdminAllOrdersQuery,
   useUpdateOrderStatusMutation,
+  useUpdateUserMutation,
+  useGetUserDetailsQuery,
 } = userReducerApi;
