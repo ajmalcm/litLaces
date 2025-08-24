@@ -13,8 +13,10 @@ import {
   IconButton,
   useMediaQuery,
 } from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
+import { Edit, Delete, Update } from "@mui/icons-material";
 import { useGetAdminAllProductsQuery } from "@/redux/services/userReducers";
+import { set } from "mongoose";
+import UpdateProductModal from "@/components/UpdateProductModal";
 
 type ProductType = {
   _id: string;
@@ -41,6 +43,8 @@ const AllProducts = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [editProductModalOpen, setEditProductModalOpen] = useState(false);
+  const [productId,setProductId]=useState<string>("");
   const isMobile = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
@@ -122,7 +126,7 @@ const AllProducts = () => {
           <IconButton
             color="primary"
             size="small"
-            onClick={() => alert(`Edit Product ${params.row._id}`)}
+            onClick={() => {setEditProductModalOpen(true); setProductId(params.row._id)}}
           >
             <Edit />
           </IconButton>
@@ -262,6 +266,11 @@ const AllProducts = () => {
           }}
         />
       </Box>
+        {editProductModalOpen &&
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-full h-full overflow-auto">
+         <UpdateProductModal id={productId} setEditProductModalOpen={setEditProductModalOpen} editProductModalOpen={editProductModalOpen}/>
+      </div>
+         }
     </Box>
   );
 };

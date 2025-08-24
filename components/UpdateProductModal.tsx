@@ -6,7 +6,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 
-const AddProduct = () => {
+const UpdateProductModal = ({id,setEditProductModalOpen,editProductModalOpen}:{id:string,setEditProductModalOpen:Function,editProductModalOpen:boolean}) => {
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -61,21 +61,22 @@ const AddProduct = () => {
     const newSizes=formData.sizes.map(s=>({size:Number(s.size),stock:s.stock||0}));
     setFormData({...formData,price:Number(formData.price),sizes:newSizes});
     console.log("Form submitted", formData);
+    setEditProductModalOpen(false);
     // Add API integration to save product details
   };
 
   return (
-    <div className="bg-gray-800 p-4 flex justify-center items-center flex-1">
-      <div className="w-full md:w-[80%] bg-gray-900 p-6 rounded-lg shadow-lg">
+    <div className="p-2 md:p-4 flex justify-center items-center flex-1 w-full mx-auto overflow-auto">
+      <div className="w-[95%] md:w-[50%] mx-auto bg-gray-900 p-6 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold text-gray-100 text-center mb-6">
-          Add New Product
+          Update Product
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Product Name */}
           <div>
-            <label htmlFor="name" className="block text-gray-300 font-medium">
+            {/* <label htmlFor="name" className="block text-gray-300 font-medium">
               Product Name
-            </label>
+            </label> */}
             <input
               type="text"
               id="name"
@@ -90,12 +91,12 @@ const AddProduct = () => {
 
           {/* Category */}
           <div>
-            <label
+            {/* <label
               htmlFor="category"
               className="block text-gray-300 font-medium"
             >
               Category
-            </label>
+            </label> */}
             <select
               id="category"
               name="category"
@@ -117,9 +118,9 @@ const AddProduct = () => {
 
           {/* Gender */}
           <div>
-            <label htmlFor="gender" className="block text-gray-300 font-medium">
+            {/* <label htmlFor="gender" className="block text-gray-300 font-medium">
               Gender
-            </label>
+            </label> */}
             <select
               id="gender"
               name="gender"
@@ -224,12 +225,12 @@ const AddProduct = () => {
 
           {/* Description */}
           <div>
-            <label
+            {/* <label
               htmlFor="description"
               className="block text-gray-300 font-medium"
             >
               Description
-            </label>
+            </label> */}
             <textarea
               id="description"
               name="description"
@@ -244,9 +245,9 @@ const AddProduct = () => {
 
           {/* Image Upload */}
           <div>
-            <label htmlFor="images" className="block text-gray-300 font-medium">
+            {/* <label htmlFor="images" className="block text-gray-300 font-medium">
               Product Images
-            </label>
+            </label> */}
             <input
               type="file"
               id="images"
@@ -291,7 +292,7 @@ const AddProduct = () => {
               type="submit"
               className="w-full bg-blue-500 text-gray-100 p-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
-              Add Product
+              Update Product
             </button>
           </div>
         </form>
@@ -300,4 +301,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default  UpdateProductModal ;

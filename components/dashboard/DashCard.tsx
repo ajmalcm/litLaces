@@ -1,7 +1,6 @@
 import React from 'react'
 
 const DashCard = ({icon:Icon,header,content,color}:{icon:any,header:string,content:string,color:string}) => {
-console.log(color)
 
   return (
     <div className="p-4 bg-gray-900 rounded-lg shadow-md flex items-center space-x-4">

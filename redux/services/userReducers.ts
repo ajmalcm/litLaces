@@ -144,8 +144,28 @@ export const userReducerApi = createApi({
         body:{id,name,email,phone,role}
       }),
       invalidatesTags:["User","Admin"] // ✅ refresh users after update
-    })
+    }),
+
+    addProduct: builder.mutation({
+      query: (productData) => ({
+        url: "admin/addProduct",
+        method: "POST",
+        body: productData,
+      }),
+      invalidatesTags: ["Product", "Admin"], // ✅ refresh products after adding new one
+    }),
+
+    updateProduct: builder.mutation({
+      query: ({ id, productData }) => ({
+        url: `admin/allProducts/update/${id}`,
+        method: "POST",
+        body: productData,
+      }),
+      invalidatesTags: ["Product", "Admin"], // ✅ refresh products after update
+    }),
   }),
+
+
 });
 
 export const {
@@ -168,4 +188,6 @@ export const {
   useUpdateOrderStatusMutation,
   useUpdateUserMutation,
   useGetUserDetailsQuery,
+  useAddProductMutation,
+  useUpdateProductMutation
 } = userReducerApi;

@@ -36,7 +36,6 @@ const Navbar = () => {
   const { cart ,isAuthenticated} = useSelector((state: any) => state.auth);
 
    useEffect(()=>{
-    console.log("Cart Data:", cartData);
     if(cartData && cartData.success) {
       dispatch(setCart(cartData.cartItems.cartItems));
     }
