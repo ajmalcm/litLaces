@@ -6,8 +6,8 @@ interface Sneaker extends Document {
   // category: Types.ObjectId;
   brand: string;
   category: string;
-  gender: "male" | "female" | "unisex";
-  sizes: { size: number; stock: number }[];
+  gender: "Men" | "Women" | "Unisex";
+  sizes: { size: string; stock: number }[];
   price: number;
   images: string[];
   description?: string;
@@ -23,7 +23,7 @@ const SneakerSchema = new Schema<Sneaker>(
     category: {type:String,required:true},
     gender: {
       type: String,
-      enum: ["male", "female", "unisex"],
+      enum: ["Men", "Women", "Unisex"],
       required: true,
     },
     sizes: [

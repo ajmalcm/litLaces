@@ -66,17 +66,15 @@ const UpdateProductModal = ({id,setEditProductModalOpen,editProductModalOpen}:{i
   };
 
   return (
-    <div className="p-2 md:p-4 flex justify-center items-center flex-1 w-full mx-auto overflow-auto">
-      <div className="w-[95%] md:w-[50%] mx-auto bg-gray-900 p-6 rounded-lg shadow-lg">
+    <div className="p-2 md:p-4 flex justify-center items-center flex-1 w-full h-full mx-auto ">
+      <div className="w-[95%] md:w-[50%] max-h-screen overflow-y-auto bg-gray-900 p-6 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold text-gray-100 text-center mb-6">
           Update Product
         </h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 ">
           {/* Product Name */}
           <div>
-            {/* <label htmlFor="name" className="block text-gray-300 font-medium">
-              Product Name
-            </label> */}
+           
             <input
               type="text"
               id="name"
@@ -91,12 +89,7 @@ const UpdateProductModal = ({id,setEditProductModalOpen,editProductModalOpen}:{i
 
           {/* Category */}
           <div>
-            {/* <label
-              htmlFor="category"
-              className="block text-gray-300 font-medium"
-            >
-              Category
-            </label> */}
+            
             <select
               id="category"
               name="category"
@@ -118,9 +111,7 @@ const UpdateProductModal = ({id,setEditProductModalOpen,editProductModalOpen}:{i
 
           {/* Gender */}
           <div>
-            {/* <label htmlFor="gender" className="block text-gray-300 font-medium">
-              Gender
-            </label> */}
+            
             <select
               id="gender"
               name="gender"
@@ -225,12 +216,7 @@ const UpdateProductModal = ({id,setEditProductModalOpen,editProductModalOpen}:{i
 
           {/* Description */}
           <div>
-            {/* <label
-              htmlFor="description"
-              className="block text-gray-300 font-medium"
-            >
-              Description
-            </label> */}
+           
             <textarea
               id="description"
               name="description"
@@ -245,9 +231,7 @@ const UpdateProductModal = ({id,setEditProductModalOpen,editProductModalOpen}:{i
 
           {/* Image Upload */}
           <div>
-            {/* <label htmlFor="images" className="block text-gray-300 font-medium">
-              Product Images
-            </label> */}
+           
             <input
               type="file"
               id="images"

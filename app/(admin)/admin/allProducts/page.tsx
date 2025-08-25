@@ -147,6 +147,7 @@ const AllProducts = () => {
     return <Typography color="error">Error loading products.</Typography>;
 
   return (
+    <>
     <Box
       sx={{
         backgroundColor: "black",
@@ -266,12 +267,13 @@ const AllProducts = () => {
           }}
         />
       </Box>
+    </Box>
         {editProductModalOpen &&
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-full h-full overflow-auto">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-full  overflow-auto">
          <UpdateProductModal id={productId} setEditProductModalOpen={setEditProductModalOpen} editProductModalOpen={editProductModalOpen}/>
       </div>
          }
-    </Box>
+    </>
   );
 };
 
