@@ -92,6 +92,7 @@ const AllProducts = () => {
     },
     { field: "_id", headerName: "ID", width: 80 },
     { field: "name", headerName: "Product Name", flex: 1 },
+    { field: "brand", headerName: "Brand", flex: 1,sortable:true },
     { field: "category", headerName: "Category", width: 150 },
     {
       field: "price",

@@ -27,11 +27,11 @@ export const GET=async(req:NextRequest,{params}:{params:Promise<{id:String}>})=>
         }
 
          relatedProducts = relatedProducts.slice(0, 4); // Limit to 4 related products
-        return NextResponse.json({ product, relatedProducts }, { status: 200 });
+        return NextResponse.json({success:true, product, relatedProducts }, { status: 200 });
     }
     catch(err)
     {
         console.error("Error fetching product:", err);
-        return NextResponse.json({ message: "Unable to fetch product" }, { status: 500 });
+        return NextResponse.json({success:false, message: "Unable to fetch product" }, { status: 500 });
     }
 }
