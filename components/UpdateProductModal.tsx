@@ -1,11 +1,10 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
-import { useAddProductMutation, useGetProductDetailsQuery } from "@/redux/services/userReducers";
+import { useGetProductDetailsQuery ,useUpdateProductMutation} from "@/redux/services/userReducers";
 import { toast } from "sonner";
 // import {Cross} from "lucide-react"
 import { Close } from "@mui/icons-material";
@@ -23,6 +22,7 @@ const UpdateProductModal = ({id,setEditProductModalOpen,editProductModalOpen}:{i
   });
 
   const {data:productData,isLoading,error}=useGetProductDetailsQuery(id);
+  const [UpdateProductMutation,{isLoading:updateProductLoading}]=useUpdateProductMutation();
 
   const sizes = ["36", "37", "38", "39", "40", "41", "42", "43", "44"];
   const brands = [
@@ -96,7 +96,13 @@ const UpdateProductModal = ({id,setEditProductModalOpen,editProductModalOpen}:{i
 
     // convert all selected images to base64
     const base64Images = await Promise.all(
-      formData.images.map((img: any) => getBase64(img.file))
+      formData.images.map((img: any) =>
+        img.file instanceof Blob
+          ? getBase64(img.file)
+          : img.public_id && img.url
+            ? img // keep as object
+            : { url: img.url, public_id: "" } // fallback for legacy
+      )
     );
 
     // ✅ Build payload explicitly
@@ -109,18 +115,10 @@ const UpdateProductModal = ({id,setEditProductModalOpen,editProductModalOpen}:{i
 
     console.log("Submitting payload", payload);
 
-    // const { data, error } = await addProductMutation(payload);
-
-    // if (data?.success) {
-    //   toast.success(data?.message);
-    // }
-    // if (error && "data" in error) {
-    //   const errorMessage = (error.data as { message: string })?.message;
-    //   toast.error(errorMessage);
-    // }
+    const { data, error } = await UpdateProductMutation({id:id,productData:payload});
 
     // reset form
-    setFormData({
+    data?.success && setFormData({
       name: "",
       brand: "",
       category: "",
@@ -130,13 +128,31 @@ const UpdateProductModal = ({id,setEditProductModalOpen,editProductModalOpen}:{i
       images: [],
       sizes: [],
     });
+
+    if(data?.success)
+      {
+        toast.success(data?.message);
+    setEditProductModalOpen(false);
+      }
+      if(error && "data" in error)
+      {
+        const errorMessage = (error.data as { message: string })?.message;
+        toast.error(errorMessage);
+      }
+
+
   };
 
   useEffect(()=>{
     if(productData && productData?.success){
-      console.log(productData?.product);
       const {name,brand,category,price,gender,description,images,sizes}=productData?.product;
-      setFormData({name,brand,category,price,gender,description,images,sizes});
+      // Ensure images are objects
+      const formattedImages = images.map((img: any) =>
+        typeof img === "string"
+          ? { url: img, public_id: "" } // fallback if only url is present
+          : img
+      );
+      setFormData({ name, brand, category, price, gender, description, images: formattedImages, sizes });
     }
     if (error && "data" in error) {
       const errorMessage = (error.data as { message: string })?.message;
@@ -240,20 +256,19 @@ const UpdateProductModal = ({id,setEditProductModalOpen,editProductModalOpen}:{i
               onChange={handleSizeChange}
               getOptionLabel={(option) => option}
               renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip
-                    variant="outlined"
-                    sx={{
-                      color: "white",
-                      borderColor: "white",
-                      "& .MuiChip-deleteIcon": {
-                        color: "white",
-                      },
-                    }}
-                    label={option}
-                    {...getTagProps({ index })}
-                  />
-                ))
+                value.map((option, index) => {
+                  const tagProps = getTagProps({ index });
+                  const { key, ...rest } = tagProps;
+                  return (
+                    <Chip
+                      key={key}
+                      variant="outlined"
+                      sx={{ color: "white", borderColor: "white", "& .MuiChip-deleteIcon": { color: "white" } }}
+                      label={option}
+                      {...rest}
+                    />
+                  );
+                })
               }
               renderInput={(params) => (
                 <TextField
@@ -407,8 +422,11 @@ const UpdateProductModal = ({id,setEditProductModalOpen,editProductModalOpen}:{i
             <button
               type="submit"
               className="w-full bg-blue-500 text-gray-100 p-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              disabled={updateProductLoading}
             >
-              Update Product
+            {
+              ! updateProductLoading ? "Update Product" : "Updating..."
+            }
             </button>
           </div>
         </form>

@@ -29,9 +29,9 @@ export const POST = async (req: NextRequest, { params }: { params: Promise<{ id:
 
     // 1. Keep or upload new images
     for (let img of images) {
-      if (img.public_id && img.url) {
+      if (typeof img === "object" && img.public_id && img.url) {
         uploadedImages.push(img); // keep existing
-      } else {
+      } else if (typeof img === "string") {
         const result = await cloudinary.uploader.upload(img, { folder: "products" });
         uploadedImages.push({ public_id: result.public_id, url: result.secure_url });
       }
@@ -54,9 +54,9 @@ export const POST = async (req: NextRequest, { params }: { params: Promise<{ id:
       { new: true }
     );
 
-    return NextResponse.json({ message: "Product updated successfully", updatedProduct }, { status: 200 });
+    return NextResponse.json({success:true, message: "Product updated successfully", updatedProduct }, { status: 200 });
   } catch (err) {
     console.error("Error updating product:", err);
-    return NextResponse.json({ success: false, message: "Unable to update product" }, { status: 500 });
+    return NextResponse.json({ success: false, message: err }, { status: 500 });
   }
 };

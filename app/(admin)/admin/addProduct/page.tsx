@@ -34,7 +34,7 @@ const AddProduct = () => {
     "Vans",
     "Fila",
   ];
-  const [addProductMutation] = useAddProductMutation();
+  const [addProductMutation,{isLoading}] = useAddProductMutation();
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
@@ -415,8 +415,9 @@ const AddProduct = () => {
             <button
               type="submit"
               className="w-full bg-blue-500 text-gray-100 p-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              disabled={isLoading}
             >
-              Add Product
+             {isLoading ? "Adding..." : "Add Product"}
             </button>
           </div>
         </form>

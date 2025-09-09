@@ -40,34 +40,25 @@ type ProductType = {
 
 const AllProducts = () => {
   const { data = [], isLoading, error } = useGetAdminAllProductsQuery("");
-  const [products, setProducts] = useState<ProductType[]>([]);
+  // const [products, setProducts] = useState<ProductType[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [editProductModalOpen, setEditProductModalOpen] = useState(false);
   const [productId,setProductId]=useState<string>("");
   const isMobile = useMediaQuery("(max-width:600px)");
 
-  useEffect(() => {
-    if (
-      Array.isArray(data) &&
-      (products.length !== data.length ||
-        products.some((p, i) => p._id !== data[i]._id))
-    ) {
-      setProducts(data);
-    }
-  }, [data]);
 
-  const filteredProducts = useMemo(() => {
-    return products.filter(
-      (product) =>
-        product.name.toLowerCase().includes(search.toLowerCase()) &&
-        (category === "" || product.category === category)
-    );
-  }, [products, search, category]);
+ const filteredProducts = useMemo(() => {
+  return (Array.isArray(data) ? data : []).filter(
+    (product) =>
+      product.name.toLowerCase().includes(search.toLowerCase()) &&
+      (category === "" || product.category === category)
+  );
+}, [data, search, category]);
 
   const handleDelete = (id: string) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      setProducts((prev) => prev.filter((product) => product._id !== id));
+      // setProducts((prev) => prev.filter((product) => product._id !== id));
     }
   };
 
