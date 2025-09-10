@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, use } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   Box,
@@ -13,53 +13,48 @@ import {
   IconButton,
   useMediaQuery,
 } from "@mui/material";
-import { Edit, Delete, Update } from "@mui/icons-material";
-import { useGetAdminAllProductsQuery } from "@/redux/services/userReducers";
-import { set } from "mongoose";
+import { Edit, Delete } from "@mui/icons-material";
+import {
+  useGetAdminAllProductsQuery,
+  useDeleteProductMutation,
+} from "@/redux/services/userReducers";
 import UpdateProductModal from "@/components/UpdateProductModal";
-
-type ProductType = {
-  _id: string;
-  name: string;
-  brand: string;
-  category: string;
-  gender: string;
-  sizes: {
-    _id: string;
-    size: number;
-    stock: number;
-  }[];
-  price: number;
-  images: {
-    _id: string;
-    public_id: string;
-    url: string;
-  }[];
-  description: string;
-};
+import { toast } from "sonner";
 
 const AllProducts = () => {
   const { data = [], isLoading, error } = useGetAdminAllProductsQuery("");
+  const [deleteProductMutation] = useDeleteProductMutation();
   // const [products, setProducts] = useState<ProductType[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [editProductModalOpen, setEditProductModalOpen] = useState(false);
-  const [productId,setProductId]=useState<string>("");
+  const [productId, setProductId] = useState<string>("");
   const isMobile = useMediaQuery("(max-width:600px)");
 
+  const filteredProducts = useMemo(() => {
+    return (Array.isArray(data) ? data : []).filter(
+      (product) =>
+        product.name.toLowerCase().includes(search.toLowerCase()) &&
+        (category === "" || product.category === category)
+    );
+  }, [data, search, category]);
 
- const filteredProducts = useMemo(() => {
-  return (Array.isArray(data) ? data : []).filter(
-    (product) =>
-      product.name.toLowerCase().includes(search.toLowerCase()) &&
-      (category === "" || product.category === category)
-  );
-}, [data, search, category]);
-
-  const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
+  const handleDelete = async (id: string) => {
+    const { data, error } = await deleteProductMutation(id);
+   
+      // toast.loading("Deleting product...");
+    if (data?.success) {
+      // Remove the deleted product from the local state
       // setProducts((prev) => prev.filter((product) => product._id !== id));
+      toast.success(data.message);
     }
+    if (error) {
+      if ("data" in error) {
+        const errorMessage = (error.data as { message: string })?.message;
+        toast.error(errorMessage);
+      }
+    }
+    // toast.dismiss();
   };
 
   const columns = [
@@ -83,7 +78,7 @@ const AllProducts = () => {
     },
     { field: "_id", headerName: "ID", width: 80 },
     { field: "name", headerName: "Product Name", flex: 1 },
-    { field: "brand", headerName: "Brand", flex: 1,sortable:true },
+    { field: "brand", headerName: "Brand", flex: 1, sortable: true },
     { field: "category", headerName: "Category", width: 150 },
     {
       field: "price",
@@ -118,7 +113,10 @@ const AllProducts = () => {
           <IconButton
             color="primary"
             size="small"
-            onClick={() => {setEditProductModalOpen(true); setProductId(params.row._id)}}
+            onClick={() => {
+              setEditProductModalOpen(true);
+              setProductId(params.row._id);
+            }}
           >
             <Edit />
           </IconButton>
@@ -140,17 +138,17 @@ const AllProducts = () => {
 
   return (
     <>
-    <Box
-      sx={{
-        backgroundColor: "black",
-        minHeight: "100vh",
-        p: { xs: 2, md: 4 },
-        flex: 1,
-        overflow: "scroll",
-        maxWidth: "100vw",
-      }}
-    >
-      {/* <Typography
+      <Box
+        sx={{
+          backgroundColor: "black",
+          minHeight: "100vh",
+          p: { xs: 2, md: 4 },
+          flex: 1,
+          overflow: "scroll",
+          maxWidth: "100vw",
+        }}
+      >
+        {/* <Typography
         variant="h4"
         component="h1"
         gutterBottom
@@ -158,113 +156,119 @@ const AllProducts = () => {
       >
         All Products
       </Typography> */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          gap: 2,
-          mb: 4,
-        }}
-      >
-        <TextField
-          label="Search by Name"
-          variant="outlined"
-          size="small"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+        <Box
           sx={{
-            backgroundColor: "#1a1a1a",
-            color: "white",
-            flex: 1,
-            "& .MuiInputBase-root": { color: "white" },
-            "& .MuiOutlinedInput-notchedOutline": { borderColor: "#444" },
-            "& .MuiOutlinedInput-notchedOutline:hover": { borderColor: "#555" },
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            gap: 2,
+            mb: 4,
           }}
-          InputLabelProps={{
-            style: { color: "#ccc" },
-          }}
-        />
-        <FormControl size="small" sx={{ minWidth: 150 }}>
-          <InputLabel sx={{ color: "#ccc" }}>Category</InputLabel>
-          <Select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
+        >
+          <TextField
+            label="Search by Name"
+            variant="outlined"
+            size="small"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             sx={{
               backgroundColor: "#1a1a1a",
               color: "white",
+              flex: 1,
+              "& .MuiInputBase-root": { color: "white" },
               "& .MuiOutlinedInput-notchedOutline": { borderColor: "#444" },
               "& .MuiOutlinedInput-notchedOutline:hover": {
                 borderColor: "#555",
               },
             }}
-          >
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="Men">Men</MenuItem>
-            <MenuItem value="Women">Women</MenuItem>
-            <MenuItem value="Unisex">Unisex</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-      <Box
-        sx={{
-          height: 500,
-          backgroundColor: "#1a1a1a",
-          borderRadius: 2,
-          overflow: "hidden",
-          boxShadow: 3,
-        }}
-      >
-        <DataGrid
-          rows={filteredProducts.map((p) => ({ ...p, id: p._id }))}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { pageSize: 10, page: 0 },
-            },
-          }}
-          pageSizeOptions={[10, 25, 50]}
-          disableRowSelectionOnClick
+            InputLabelProps={{
+              style: { color: "#ccc" },
+            }}
+          />
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel sx={{ color: "#ccc" }}>Category</InputLabel>
+            <Select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              sx={{
+                backgroundColor: "#1a1a1a",
+                color: "white",
+                "& .MuiOutlinedInput-notchedOutline": { borderColor: "#444" },
+                "& .MuiOutlinedInput-notchedOutline:hover": {
+                  borderColor: "#555",
+                },
+              }}
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="Men">Men</MenuItem>
+              <MenuItem value="Women">Women</MenuItem>
+              <MenuItem value="Unisex">Unisex</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+        <Box
           sx={{
-            color: "white",
-            border: "none",
-            "& .MuiDataGrid-columnHeader": {
-              backgroundColor: "rgb(17 24 39)",
-              color: "#ccc",
-            },
-            "& .MuiDataGrid-footerContainer": {
-              backgroundColor: "rgb(17 24 39)",
-              color: "#ccc",
-            },
-            "& .MuiButton-outlined": {
-              borderColor: "#444",
-              color: "#fff",
-            },
-            "& .MuiButton-outlined:hover": {
-              borderColor: "#fff",
-            },
-            "& .MuiTablePagination-root": {
-              color: "#fff",
-            },
-            "& .MuiSvgIcon-root": {
-              color: "#ccc",
-            },
-            "& .MuiSvgIcon-root:hover": {
-              color: "#ccc",
-            },
-            " & .MuiDataGrid-row": {
-              backgroundColor: "rgb(31 41 55)",
-            },
-            overflow: "scroll",
-            backgroundColor: "rgb(17 24 39)",
+            height: 500,
+            backgroundColor: "#1a1a1a",
+            borderRadius: 2,
+            overflow: "hidden",
+            boxShadow: 3,
           }}
-        />
+        >
+          <DataGrid
+            rows={filteredProducts.map((p) => ({ ...p, id: p._id }))}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 10, page: 0 },
+              },
+            }}
+            pageSizeOptions={[10, 25, 50]}
+            disableRowSelectionOnClick
+            sx={{
+              color: "white",
+              border: "none",
+              "& .MuiDataGrid-columnHeader": {
+                backgroundColor: "rgb(17 24 39)",
+                color: "#ccc",
+              },
+              "& .MuiDataGrid-footerContainer": {
+                backgroundColor: "rgb(17 24 39)",
+                color: "#ccc",
+              },
+              "& .MuiButton-outlined": {
+                borderColor: "#444",
+                color: "#fff",
+              },
+              "& .MuiButton-outlined:hover": {
+                borderColor: "#fff",
+              },
+              "& .MuiTablePagination-root": {
+                color: "#fff",
+              },
+              "& .MuiSvgIcon-root": {
+                color: "#ccc",
+              },
+              "& .MuiSvgIcon-root:hover": {
+                color: "#ccc",
+              },
+              " & .MuiDataGrid-row": {
+                backgroundColor: "rgb(31 41 55)",
+              },
+              overflow: "scroll",
+              backgroundColor: "rgb(17 24 39)",
+            }}
+          />
+        </Box>
       </Box>
-    </Box>
-        {editProductModalOpen &&
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-full  overflow-auto">
-         <UpdateProductModal id={productId} setEditProductModalOpen={setEditProductModalOpen} editProductModalOpen={editProductModalOpen}/>
-      </div>
-         }
+      {editProductModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-full  overflow-auto">
+          <UpdateProductModal
+            id={productId}
+            setEditProductModalOpen={setEditProductModalOpen}
+            editProductModalOpen={editProductModalOpen}
+          />
+        </div>
+      )}
     </>
   );
 };

@@ -2,21 +2,21 @@
 
 import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  Box,
-  IconButton,
-  useMediaQuery,
-  Chip,
-} from "@mui/material";
+import { Box, IconButton, useMediaQuery, Chip } from "@mui/material";
 import { Visibility, Delete } from "@mui/icons-material";
-import { useGetAdminAllOrdersQuery } from "@/redux/services/userReducers";
+import {
+  useGetAdminAllOrdersQuery,
+  useDeleteOrderMutation,
+} from "@/redux/services/userReducers";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const AllOrders = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const { data } = useGetAdminAllOrdersQuery("");
+  const [deleteOrderMutation] = useDeleteOrderMutation();
   console.log(data);
-  const navigate=useRouter();
+  const navigate = useRouter();
 
   useEffect(() => {
     if (Array.isArray(data)) {
@@ -28,11 +28,22 @@ const AllOrders = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
 
   // Delete Handler
-  const handleDelete = (id: string) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this order?");
-    if (confirmDelete) {
+  const handleDelete = async (id: string) => {
+    // const confirmDelete = window.confirm("Are you sure you want to delete this order?");
+    const { data, error } = await deleteOrderMutation(id);
+   
+      // toast.loading("Deleting order...");
+    if (data?.success) {
       setOrders((prev) => prev.filter((order) => order._id !== id));
+      toast.success(data.message);
     }
+    if (error) {
+      if ("data" in error) {
+        const errorMessage = (error.data as { message: string })?.message;
+        toast.error(errorMessage);
+      }
+    }
+  
   };
 
   // DataGrid Columns
@@ -93,7 +104,9 @@ const AllOrders = () => {
           <IconButton
             color="primary"
             size="small"
-            onClick={() => navigate.push(`/admin/allOrders/${params?.row?._id}`)} // ✅ fixed
+            onClick={() =>
+              navigate.push(`/admin/allOrders/${params?.row?._id}`)
+            } // ✅ fixed
           >
             <Visibility />
           </IconButton>

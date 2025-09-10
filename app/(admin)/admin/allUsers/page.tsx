@@ -10,8 +10,12 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import { useGetAdminAllUsersQuery } from "@/redux/services/userReducers";
+import {
+  useGetAdminAllUsersQuery,
+  useDeleteUserMutation,
+} from "@/redux/services/userReducers";
 import UpdateUserData from "@/components/UpdateUserData";
+import { toast } from "sonner";
 
 type UserType = {
   _id: string;
@@ -32,7 +36,8 @@ const AllUsers = () => {
   const [search, setSearch] = useState("");
   const [deletedIds, setDeletedIds] = useState<string[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [userId,setUserId]=useState<string>("");
+  const [userId, setUserId] = useState<string>("");
+  const [deleteUserMutataion] = useDeleteUserMutation();
   const isMobile = useMediaQuery("(max-width:600px)");
 
   // Filter out deleted users
@@ -46,13 +51,23 @@ const AllUsers = () => {
   }, [data, search, deletedIds]);
 
   // Delete Handler
-  const handleDelete = (id: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
-    if (confirmDelete) {
+  const handleDelete = async (id: string) => {
+    const { data, error } = await deleteUserMutataion(id);
+    
+      // toast.loading("Deleting user...");
+    if (data?.success) {
       setDeletedIds((prev) => [...prev, id]);
+      toast.success(data.message);
     }
+
+    if (error) {
+      if ("data" in error) {
+        const errorMessage = (error.data as { message: string })?.message;
+        toast.error(errorMessage);
+      }
+    }
+    
+    // toast.dismiss();
   };
 
   // DataGrid Columns
@@ -104,7 +119,10 @@ const AllUsers = () => {
               color: "#007BFF",
               "&:hover": { color: "#0056b3" },
             }}
-            onClick={() => {  setShowModal(true); setUserId(params.row.id)}}
+            onClick={() => {
+              setShowModal(true);
+              setUserId(params.row.id);
+            }}
           >
             <Edit />
           </IconButton>
@@ -212,13 +230,15 @@ const AllUsers = () => {
           }}
         />
       </Box>
-      {
-        showModal &&
-        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-full h-full'>
-
-          <UpdateUserData showModal={showModal} setShowModal={setShowModal} id={userId}/>
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 w-full h-full">
+          <UpdateUserData
+            showModal={showModal}
+            setShowModal={setShowModal}
+            id={userId}
+          />
         </div>
-      }
+      )}
     </Box>
   );
 };
