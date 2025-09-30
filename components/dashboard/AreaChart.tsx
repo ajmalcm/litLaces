@@ -20,13 +20,13 @@ import {
 
 // Updated chartData for the last 7 days
 const chartData = [
-  { day: "Mo", online: 150, inStore: 70 },
-  { day: "Tue", online: 200, inStore: 90 },
-  { day: "Wed", online: 180, inStore: 110 },
-  { day: "Thu", online: 220, inStore: 100 },
-  { day: "Fri", online: 250, inStore: 120 },
-  { day: "Sat", online: 300, inStore: 150 },
-  { day: "Sun", online: 280, inStore: 130 },
+  { day: "Mo", online: 150},  //if you want to add inStore sales, just add ,inStore: value int each object
+  { day: "Tue", online: 200},
+  { day: "Wed", online: 180},
+  { day: "Thu", online: 220},
+  { day: "Fri", online: 250},
+  { day: "Sat", online: 300},
+  { day: "Sun", online: 280},
 ]
 
 // Updated chartConfig for sales
@@ -35,10 +35,10 @@ const chartConfig = {
     label: "Online Sales",
     color: "hsl(var(--chart-1))",
   },
-  inStore: {
-    label: "In-Store Sales",
-    color: "hsl(var(--chart-2))",
-  },
+  // inStore: {
+  //   label: "In-Store Sales",
+  //   color: "hsl(var(--chart-2))",
+  // },
 } satisfies ChartConfig
 
 export default function Areachart() {
@@ -79,14 +79,14 @@ export default function Areachart() {
               stroke="var(--color-online)"
               stackId="a"
             />
-            <Area
+            {/* <Area
               dataKey="inStore"
               type="natural"
               fill="var(--color-inStore)"
               fillOpacity={0.4}
               stroke="var(--color-inStore)"
               stackId="a"
-            />
+            /> */}
           </AreaChart>
         </ChartContainer>
       </CardContent>

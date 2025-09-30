@@ -6,7 +6,7 @@ export const userReducerApi = createApi({
     baseUrl: "/api/",
     credentials: "include",
   }),
-  tagTypes: ["User", "Product", "Cart", "Order", "Admin"], // ✅ declare tags
+  tagTypes: ["User", "Product", "Cart", "Order", "Admin","stats"], // ✅ declare tags
   endpoints: (builder) => ({
     loadUser: builder.query({
       query: () => "user/me",
@@ -19,7 +19,7 @@ export const userReducerApi = createApi({
         method: "POST",
         body: userData,
       }),
-      invalidatesTags: ["User"], // ✅ refresh user after register
+      invalidatesTags: ["User","stats"], // ✅ refresh user after register
     }),
 
     loginUser: builder.mutation({
@@ -95,7 +95,7 @@ export const userReducerApi = createApi({
         method: "POST",
         body: orderData,
       }),
-      invalidatesTags: ["Order", "Cart"], // ✅ refresh orders & cart
+      invalidatesTags: ["Order", "Cart","stats"], // ✅ refresh orders & cart
     }),
 
     getMyOrders: builder.query({
@@ -129,7 +129,7 @@ export const userReducerApi = createApi({
         body: { status },
         method: "POST",
       }),
-      invalidatesTags: ["Order", "Admin"], // ✅ refresh orders after update
+      invalidatesTags: ["Order", "Admin","stats"], // ✅ refresh orders after update
     }),
 
     deleteOrder:builder.mutation({
@@ -137,7 +137,7 @@ export const userReducerApi = createApi({
         url:`admin/allOrders/delete/${id}`,
         method:"DELETE"
       }),
-      invalidatesTags:["Order","Admin"]
+      invalidatesTags:["Order","Admin","stats"]
     }),
 
     getUserDetails: builder.query({
@@ -151,7 +151,7 @@ export const userReducerApi = createApi({
         method:"POST",
         body:{id,name,email,phone,role}
       }),
-      invalidatesTags:["User","Admin"] // ✅ refresh users after update
+      invalidatesTags:["User","Admin","stats"], // ✅ refresh users after update
     }),
 
     deleteUser:builder.mutation({
@@ -159,7 +159,7 @@ export const userReducerApi = createApi({
         url:`admin/allUsers/delete/${id}`,
         method:"DELETE"
       }),
-      invalidatesTags:["User","Admin"]
+      invalidatesTags:["User","Admin","stats"]
     }),
 
     addProduct: builder.mutation({
@@ -168,7 +168,7 @@ export const userReducerApi = createApi({
         method: "POST",
         body: productData,
       }),
-      invalidatesTags: ["Product", "Admin"], // ✅ refresh products after adding new one
+      invalidatesTags: ["Product", "Admin","stats"], // ✅ refresh products after adding new one
     }),
 
     updateProduct: builder.mutation({
@@ -177,7 +177,7 @@ export const userReducerApi = createApi({
         method: "POST",
         body: productData,
       }),
-      invalidatesTags: ["Product", "Admin"], // ✅ refresh products after update
+      invalidatesTags: ["Product", "Admin","stats"], // ✅ refresh products after update
     }),
 
 
@@ -186,7 +186,12 @@ export const userReducerApi = createApi({
         url:`admin/allProducts/delete/${id}`,
         method:"DELETE"
       }),
-      invalidatesTags:["Product","Admin"]
+      invalidatesTags:["Product","Admin","stats"]
+    }),
+
+    getAdminStats:builder.query({
+      query:()=>"admin/stats",
+      providesTags:["Admin","Product","User","Order"]
     })
   }),
 
@@ -219,4 +224,5 @@ export const {
   useDeleteOrderMutation,
   useDeleteUserMutation,
   useDeleteProductMutation,
+  useGetAdminStatsQuery,
 } = userReducerApi;
