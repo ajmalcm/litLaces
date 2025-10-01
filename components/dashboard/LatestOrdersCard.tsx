@@ -6,7 +6,8 @@ const LatestOrdersCard = ({
   amount,
   status,
   id,
-  itemsCount
+  itemsCount,
+  paidAt
 }: {
   image: any;
   customer: string;
@@ -14,6 +15,7 @@ const LatestOrdersCard = ({
   status: string;
   id: string;
   itemsCount:number;
+  paidAt:string;
 }) => {
   return (
     <div className="relative">
@@ -50,6 +52,7 @@ const LatestOrdersCard = ({
       </div>
     </li>
     <p className="absolute  -top-2 -right-2 bg-[#0a0a0a] text-white text-xs px-2 py-1 rounded-full  ">{itemsCount}</p>
+    <p className="absolute text-gray-300 text-xs bottom-2 right-3"><strong>PaidAt: </strong>{new Date(paidAt).toLocaleDateString()}</p>
     </div>
   );
 };

@@ -20,10 +20,6 @@ import {
 } from "@/components/ui/chart";
 
 // Updated chart data
-const productStockData = [
-  { status: "In-Stock", count: 150, fill: "hsl(var(--chart-1))" },
-  { status: "Out-of-Stock", count: 50, fill: "hsl(var(--chart-2))" },
-];
 
 // Updated chart configuration
 const chartConfig = {
@@ -37,7 +33,12 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function Piechart() {
+export default function Piechart({inStock=0,outOfStock=0}: {inStock?:number,outOfStock?:number}) {
+  const productStockData = [
+    { status: "In-Stock", count: inStock, fill: "hsl(var(--chart-1))" },
+    { status: "Out-of-Stock", count: outOfStock, fill: "hsl(var(--chart-2))" },
+  ];
+
   const totalProducts = React.useMemo(() => {
     return productStockData.reduce((acc, curr) => acc + curr.count, 0);
   }, []);
@@ -78,7 +79,8 @@ export default function Piechart() {
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className=" text-white text-3xl font-bold"
+                          style={{filter:'invert(1)'}}
+                          className="text-3xl font-bold"
                         >
                           {totalProducts.toLocaleString()}
                         </tspan>
