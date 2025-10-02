@@ -33,15 +33,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function Piechart({inStock=0,outOfStock=0}: {inStock?:number,outOfStock?:number}) {
+export default function Piechart({inStock,outOfStock,totalProducts}: {inStock?:number,outOfStock?:number,totalProducts?:number}) {
   const productStockData = [
     { status: "In-Stock", count: inStock, fill: "hsl(var(--chart-1))" },
     { status: "Out-of-Stock", count: outOfStock, fill: "hsl(var(--chart-2))" },
   ];
-
-  const totalProducts = React.useMemo(() => {
-    return productStockData.reduce((acc, curr) => acc + curr.count, 0);
-  }, []);
 
   return (
     <Card className="flex flex-col w-full bg-gray-900 text-white border-gray-800">
@@ -82,7 +78,7 @@ export default function Piechart({inStock=0,outOfStock=0}: {inStock?:number,outO
                           style={{filter:'invert(1)'}}
                           className="text-3xl font-bold"
                         >
-                          {totalProducts.toLocaleString()}
+                          {totalProducts}
                         </tspan>
                         <tspan
                           x={viewBox.cx}

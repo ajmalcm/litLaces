@@ -147,9 +147,16 @@ const ChartTooltipContent = React.forwardRef<
           : itemConfig?.label
 
       if (labelFormatter) {
+        // Ensure we pass the actual x-axis label (date) to the formatter.
+        // Recharts sometimes provides label as undefined or an index, so
+        // fallback to the payload object's field (commonly 'date') or the
+        // previously derived value.
+        const rawLabel =
+          label ?? payload?.[0]?.payload?.[labelKey || "date"] ?? value
+
         return (
           <div className={cn("font-medium", labelClassName)}>
-            {labelFormatter(value, payload)}
+            {labelFormatter(rawLabel as any, payload)}
           </div>
         )
       }

@@ -52,6 +52,7 @@ const Dashboard = () => {
     },
   ];
   console.log(data);
+  
 
   return (
     <div className="flex flex-1">
@@ -82,7 +83,7 @@ const Dashboard = () => {
             <h2 className="text-xl font-semibold mb-4">New Orders</h2>
             <ul className="space-y-4">
               {data &&
-                last5Orders.map((order: any, index: any) => (
+                last5Orders?.slice(0,3)?.map((order: any, index: any) => (
                   <LatestOrdersCard
                     key={index}
                     image={order?.orderItems[0].image}
@@ -107,6 +108,7 @@ const Dashboard = () => {
             <PieChart
               inStock={inStockProducts}
               outOfStock={outOfStockProducts}
+              totalProducts={totalProducts}
             />
           </div>
           <div className="bg-gray-900 rounded-lg shadow-md">
