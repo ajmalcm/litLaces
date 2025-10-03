@@ -28,15 +28,6 @@ import {
 } from "@/components/ui/select"
 import { useState } from "react";
 
-// Updated data for monthly revenue in INR
-// const revenueData = [
-//   { month: "January", revenue: 186000 },
-//   { month: "February", revenue: 305000 },
-//   { month: "March", revenue: 237000 },
-//   { month: "April", revenue: 73000 },
-//   { month: "May", revenue: 209000 },
-//   { month: "June", revenue: 214000 },
-// ];
 
 const revenueData = [
   { date: "2024-04-01", revenue: 222 },
@@ -145,22 +136,21 @@ export default function Linechart() {
   const [timeRange, setTimeRange] = useState("90d")
 
   return (
-    <Card className="w-full bg-gray-900 text-white border-gray-800">
-      <CardHeader className="flex w-full">
-        <div className="grid flex-1 gap-1">
-        <CardTitle>Monthly Revenue</CardTitle>
-        <CardDescription>January - June 2024 (in INR)</CardDescription>
-        </div>
-        <div className="bg-gray-900  border-gray-800">
-
+    <Card className="w-full bg-gray-900 text-white border-gray-800 sm:relative">
+      <CardHeader>
+        {/* <div > */}
+        <CardTitle >Monthly Revenue</CardTitle>
+        <CardDescription >January - June 2024 (in INR)</CardDescription>
+        {/* </div> */}
+        {/* <div > */}
         <Select value={timeRange} onValueChange={setTimeRange} >
           <SelectTrigger
-            className="hidden w-[160px] rounded-lg sm:ml-auto sm:flex"
+            className="w-[160px] rounded-lg flex bg-gray-900  border-gray-800 sm:absolute top-2 right-3"
             aria-label="Select a value"
           >
             <SelectValue placeholder="Last 3 months" />
           </SelectTrigger>
-          <SelectContent className="rounded-xl">
+          <SelectContent className="rounded-xl bg-gray-900  border-gray-800 text-white">
             <SelectItem value="90d" className="rounded-lg">
               Last 3 months
             </SelectItem>
@@ -172,7 +162,7 @@ export default function Linechart() {
             </SelectItem>
           </SelectContent>
         </Select>
-        </div>
+        {/* </div> */}
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -187,9 +177,8 @@ export default function Linechart() {
           >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
-              // dataKey="month"
-              // tickFormatter={(value) => value.slice(0, 3)}
               style={{ fill: "white" }}
+              className="text-black"
               dataKey="date"
               tickLine={false}
               axisLine={false}
@@ -203,19 +192,11 @@ export default function Linechart() {
                 })
               }}
             />
-            {/* <YAxis
-            className="hidden md:flex"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => `₹${value / 1000}K`}
-              style={{ fill: "white" }}
-            /> */}
             <ChartTooltip
               cursor={false}
               content={
                 <ChartTooltipContent
-                className="bg-black text-white"
+                className="text-black"
                   labelFormatter={(value) => {
                     return new Date(value).toLocaleDateString("en-US", {
                       month: "short",
