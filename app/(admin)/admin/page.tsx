@@ -13,9 +13,14 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import PeopleIcon from "@mui/icons-material/People";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import millify from "millify";
+import { useState } from "react";
 
 const Dashboard = () => {
   const { data, isLoading, error } = useGetAdminStatsQuery("");
+  const [last3monthRev,setLast3MonthRev]=useState(0);
+  // const [monthlyRev,setMonthlyRev]=useState(0);
+  // const [weeklyRev,setWeeklyRev]=useState(0);
+
   const {
     totalRevenue,
     totalOrders,
@@ -51,7 +56,7 @@ const Dashboard = () => {
       color: "text-purple-500",
     },
   ];
-  console.log(data);
+  console.log(data?.yearOrderData);
   
 
   return (
@@ -75,7 +80,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Line Chart */}
           <div className="col-span-2 bg-gray-900 rounded-lg shadow-md">
-            <LineChart />
+            <LineChart data={data?.yearOrderData as any}  />
           </div>
 
           {/* Recent Orders */}
