@@ -51,31 +51,43 @@ export default function Linechart({ data }: { data: DataPoint[] }) {
   const [graphData, setGraphData] = useState<DataPoint[]>([]);
 
   useEffect(() => {
-    const newGraphData= data?.map(({ orderCount, ...rest }: DataPoint) => ({ ...rest } as DataPoint));
-    setGraphData(newGraphData);
-    console.log(newGraphData);
-    if (timeRange === "7d") {
-      //set data to last 7 days
-      setGraphData(newGraphData.slice(-7));
-    }
-    else if (timeRange === "30d") {
-      //set data to last 30 days
-      setGraphData(newGraphData.slice(-30));
-    }
-    else {
-      //set data to last 3 months (90 days)
-      setGraphData(newGraphData.slice(-90));
-    }
-  }, [timeRange])
+  if (!data) return;
 
-  console.log(graphData)
+  // Step 1: Remove orderCount and sort by date
+  const cleanedData = [...data]
+    .map(({ orderCount, ...rest }: DataPoint) => rest)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  // Step 2: Get today & generate date ranges (7, 30, 90 days)
+  const today = new Date();
+  let filteredData = cleanedData;
+
+  if (timeRange === "7d") {
+    const pastDate = new Date();
+    pastDate.setDate(today.getDate() - 7);
+    filteredData = cleanedData.filter((item) => new Date(item.date) >= pastDate);
+  } 
+  else if (timeRange === "30d") {
+    const pastDate = new Date();
+    pastDate.setDate(today.getDate() - 30);
+    filteredData = cleanedData.filter((item) => new Date(item.date) >= pastDate);
+  } 
+  else if (timeRange === "90d") {
+    const pastDate = new Date();
+    pastDate.setDate(today.getDate() - 90);
+    filteredData = cleanedData.filter((item) => new Date(item.date) >= pastDate);
+  }
+
+  setGraphData(filteredData);
+}, [timeRange, data]);
+
 
   return (
     <Card className="w-full bg-gray-900 text-white border-gray-800 sm:relative">
       <CardHeader>
         {/* <div > */}
         <CardTitle >Monthly Revenue</CardTitle>
-        <CardDescription >January - June 2024 (in INR)</CardDescription>
+        {/* <CardDescription >January - June 2024 (in INR)</CardDescription> */}
         {/* </div> */}
         {/* <div > */}
         <Select value={timeRange} onValueChange={setTimeRange} >
@@ -100,6 +112,8 @@ export default function Linechart({ data }: { data: DataPoint[] }) {
         {/* </div> */}
       </CardHeader>
       <CardContent>
+      {
+          graphData.length > 0 &&
         <ChartContainer config={chartConfig}>
           <LineChart
             data={graphData}
@@ -152,15 +166,8 @@ export default function Linechart({ data }: { data: DataPoint[] }) {
             <ChartLegend content={<ChartLegendContent />} />
           </LineChart>
         </ChartContainer>
+      }
       </CardContent>
-      {/* <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing revenue trends for the last 6 months
-        </div>
-      </CardFooter> */}
     </Card>
   );
 }

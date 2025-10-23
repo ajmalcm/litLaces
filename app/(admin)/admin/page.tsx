@@ -117,10 +117,10 @@ const Dashboard = () => {
             />
           </div>
           <div className="bg-gray-900 rounded-lg shadow-md">
-            <BarChart />
+            <BarChart data={data?.yearOrderData}/>
           </div>
           <div className="bg-gray-900 rounded-lg shadow-md">
-            <Areachart />
+            <Areachart data={data?.yearOrderData}/>
           </div>
         </div>
       </main>

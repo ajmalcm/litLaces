@@ -1,33 +1,22 @@
-"use client"
+"use client";
 
-import { TrendingUp } from "lucide-react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { DataPoint } from "@/utils/temp";
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-
-// Updated chartData for the last 7 days
-const chartData = [
-  { day: "Mo", online: 150},  //if you want to add inStore sales, just add ,inStore: value int each object
-  { day: "Tue", online: 200},
-  { day: "Wed", online: 180},
-  { day: "Thu", online: 220},
-  { day: "Fri", online: 250},
-  { day: "Sat", online: 300},
-  { day: "Sun", online: 280},
-]
+} from "@/components/ui/chart";
+import { useEffect, useState } from "react";
 
 // Updated chartConfig for sales
 const chartConfig = {
@@ -39,9 +28,47 @@ const chartConfig = {
   //   label: "In-Store Sales",
   //   color: "hsl(var(--chart-2))",
   // },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
-export default function Areachart() {
+export default function Areachart({ data }: { data: DataPoint[] }) {
+  const [areaData, setAreaData] = useState([] as any);
+
+  useEffect(() => {
+    if (!data) return;
+
+    // Step 1: Convert dates properly and sort
+    const parsedData = data
+      .map(({ orderCount, date }) => ({
+        online: orderCount,
+        day: new Date(date), // Keep real Date object
+      }))
+      .sort((a, b) => a.day.getTime() - b.day.getTime());
+
+    // Step 2: Last 7 days range
+    const today = new Date();
+    const pastDate = new Date();
+    pastDate.setDate(today.getDate() - 6); // last 7 days including today
+
+    // Step 3: Create a continuous 7-day dataset
+    const completeData: { day: string; online: number }[] = [];
+    for (let i = 0; i < 7; i++) {
+      const current = new Date(pastDate);
+      current.setDate(pastDate.getDate() + i);
+
+      // Check if data exists for this date
+      const existing = parsedData.find(
+        (item) => item.day.toDateString() === current.toDateString()
+      );
+
+      completeData.push({
+        day: current.toLocaleDateString("en-US", { weekday: "short" }), // Mon, Tue
+        online: existing?.online ?? 0, // If no order or undefined, set 0
+      });
+    }
+
+    setAreaData(completeData);
+  }, [data]);
+
   return (
     <Card className="bg-gray-900 text-white border-gray-800">
       <CardHeader>
@@ -54,7 +81,7 @@ export default function Areachart() {
         <ChartContainer config={chartConfig}>
           <AreaChart
             accessibilityLayer
-            data={chartData}
+            data={areaData}
             margin={{
               left: 12,
               right: 12,
@@ -90,18 +117,7 @@ export default function Areachart() {
           </AreaChart>
         </ChartContainer>
       </CardContent>
-      {/* <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 12.5% this week <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              Last 7 Days
-            </div>
-          </div>
-        </div>
-      </CardFooter> */}
+      
     </Card>
-  )
+  );
 }

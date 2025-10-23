@@ -32,6 +32,13 @@ export  type ProductType = {
     // add other fields as needed
   };
 
+ export type DataPoint = {
+  date: string;
+  revenue: number;
+  orderCount?: number;
+  [key: string]: any;
+}; 
+
 export const BrandItems = [
     { name: "adidas", logo: Adidas,link:'/collections/Adidas'},
     { name: "puma", logo: Puma,link:'/collections/Puma'},

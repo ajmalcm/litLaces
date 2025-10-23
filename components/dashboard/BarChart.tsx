@@ -1,7 +1,14 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, Rectangle, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Rectangle,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { DataPoint } from "@/utils/temp";
 
 import {
   Card,
@@ -17,6 +24,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useEffect, useState } from "react";
+import { set } from "mongoose";
 
 // Updated sales data
 const salesData = [
@@ -35,17 +44,56 @@ const chartConfig = {
   },
 };
 
-export default function TotalSalesChart() {
+export default function TotalSalesChart({ data }: { data: DataPoint[] }) {
+  const [barGraphData, setBarGraphData] = useState([] as any);
+
+  // Get past 6 months including current
+  const getPastSixMonths = () => {
+    const months = [];
+    const today = new Date();
+
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      months.push({
+        key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`, // e.g. "2025-10"
+        label: d.toLocaleString("en-US", { month: "short" }), // e.g. "Oct"
+      });
+    }
+    return months;
+  };
+
+  useEffect(() => {
+    if (!data) return;
+
+    const months = getPastSixMonths();
+
+    // Group API data by month and sum orderCount
+    const monthlyData = months.map((m) => {
+      const totalOrders = data
+        .filter((item) => item.date.startsWith(m.key))
+        .reduce((sum, item) => sum + (item.orderCount ?? 0), 0);
+
+      return {
+        month: m.label,
+        orders: totalOrders,
+        fill: "var(--color-chrome)",
+      };
+    });
+
+    console.log(monthlyData);
+    setBarGraphData(monthlyData);
+  }, [data]);
+
   return (
     <Card className="w-full bg-gray-900 border-gray-800">
       <CardHeader>
         <CardTitle className="text-white">Total orders by Month</CardTitle>
-        <CardDescription>January - June 2024 (in INR)</CardDescription>
+        <CardDescription>{`${new Date(new Date().setMonth(new Date().getMonth() - 5)).toLocaleDateString('en-US',{month:"short"})} - ${new Date().toLocaleDateString('en-US',{month:"short"})} ${new Date().getFullYear()}(in QTY)`}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
           <BarChart
-            data={salesData}
+            data={barGraphData}
             margin={{ top: 16, right: 16, bottom: 16, left: 16 }}
           >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
