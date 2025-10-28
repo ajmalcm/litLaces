@@ -5,21 +5,21 @@ import LineChart from "@/components/dashboard/LineChart";
 import PieChart from "@/components/dashboard/PieChart";
 import BarChart from "@/components/dashboard/BarChart";
 import Areachart from "@/components/dashboard/AreaChart";
-import { NewOrders } from "@/utils/temp";
 import LatestOrdersCard from "@/components/dashboard/LatestOrdersCard";
 import { useGetAdminStatsQuery } from "@/redux/services/userReducers";
+import DashboardSkeleton from "@/components/loaders/DashboardSkeleton";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import PeopleIcon from "@mui/icons-material/People";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import millify from "millify";
-import { useState } from "react";
 
 const Dashboard = () => {
   const { data, isLoading, error } = useGetAdminStatsQuery("");
-  const [last3monthRev,setLast3MonthRev]=useState(0);
-  // const [monthlyRev,setMonthlyRev]=useState(0);
-  // const [weeklyRev,setWeeklyRev]=useState(0);
+
+  if (isLoading || !data) {
+    return <DashboardSkeleton />
+  }
 
   const {
     totalRevenue,

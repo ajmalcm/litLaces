@@ -10,6 +10,7 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import PeopleIcon from "@mui/icons-material/People";
 import HomeIcon from "@mui/icons-material/Home";
 import { ShoppingCart } from "@mui/icons-material";
+import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 
 const Sidebar = () => {
   const navLinks = [
@@ -18,6 +19,7 @@ const Sidebar = () => {
     { item: "Add Product", link: "/admin/addProduct", icon: AddBoxIcon },
     { item: "All Users", link: "/admin/allUsers", icon: PeopleIcon },
     { item: "All Orders", link: "/admin/allOrders", icon: ShoppingCart },
+    { item: "UI comps", link: "/admin/appearence", icon: ViewCarouselIcon },
     { item: "Home", link: "/", icon: HomeIcon },
   ];
 
