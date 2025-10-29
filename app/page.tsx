@@ -1,16 +1,13 @@
 "use client";
 import Banner from "@/components/Banner";
 import Brands from "@/components/Brands";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import HomeAbout from "@/components/HomeAbout";
-import EmailSection from "@/components/EmailSection";
+// import HomeAbout from "@/components/HomeAbout";
+// import EmailSection from "@/components/EmailSection";
 import { BannerItems } from "@/utils/temp";
 import {useLoadUserQuery } from "@/redux/services/userReducers";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setAdmin, setAuthenticated, setCart } from "@/redux/reducers/userSlice";
+import { setAdmin, setAuthenticated, setCart, setName } from "@/redux/reducers/userSlice";
 import { toast } from "sonner";
 import Gif from "@/public/assets/phoneGif.gif";
 import Bgif from "@/public/assets/bbgif.gif";
@@ -24,7 +21,7 @@ declare global {
 
 const Home = () => {
   const { isLoading, data, error } = useLoadUserQuery("");
-  const { isAdmin, isAuthenticated } = useSelector((state: any) => state.auth);
+  const { isAdmin, isAuthenticated ,name} = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
   useEffect(() => {
     if (isLoading) console.log("loading");
@@ -40,14 +37,18 @@ const Home = () => {
 
     if (data && data.success ) {
       dispatch(setAuthenticated(true));
-      dispatch(setAdmin(data.isAdmin));
+      dispatch(setAdmin(data?.isAdmin));
+      dispatch(setName(data?.user?.name));
       toast.success(data.message);
+       data.success && setTimeout(()=>{
+          toast.success(`Welcome ${data?.user?.name} 😎!`);
+          },5000)
     } else {
       dispatch(setAuthenticated(false));
       dispatch(setAdmin(false));
     }
    
-  }, [error, dispatch, data, isAdmin, isAuthenticated]);
+  }, [error, dispatch,data]);  
 
 
  

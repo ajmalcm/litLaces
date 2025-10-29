@@ -27,10 +27,7 @@ export default function Login() {
     dispatch(setAuthenticated(true));
     dispatch(setAdmin(res.data.isAdmin));
     dispatch(setName(res.data.name));
-    toast.success(res.data.message);
-    setTimeout(()=>{
-    toast.success(`Welcome ${res.data.user.name} 😎!`);
-    },5000)
+    
    }
    if("error" in res)
    {
