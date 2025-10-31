@@ -519,3 +519,14 @@ export const ProductsArray2 = [
     description: "Asics Gel-Lyte, performance running shoes.",
   },
 ];
+
+
+export const fileType=(url:string)=>{
+  const fileType=url.split(".").pop();
+  if(fileType==="mp4" || fileType==="mov" || fileType==="avi" || fileType==="webm" || fileType==="ogg")
+      return "video";
+  if(fileType=="png"||fileType=="jpg"|| fileType=="jpeg"||fileType=="gif")
+    return 'image'  
+
+  return 'file';
+}
