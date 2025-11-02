@@ -1,43 +1,50 @@
-import React from "react";
+"use client"
+
+import { Edit } from "lucide-react";
+import React,{useState} from "react";
+
 
 const page = () => {
 
-  const fileType=""; //will be vieo or audio
+  const fileType="img"; //will be vieo or audio
+  const [updateBannerModal,setUpdateBannerModal]=useState(false);
 
   return (
 
-    //for mobile screens all the divs should be in a column layout with proper spacing and allignment
-    // this div should be a grid layout with proper spacing and allignment where the larger screen banner  and smaller should be like a 80-20 ratio and the three banners should be in a row below it with proper spacing
-    <div className="flex-1 flex flex-col min-h-[100vh] border-[1px] border-color-white p-1">
-      <div className="w-full flex flex-col md:flex-row gap-1 min-h-[70vh]">
-        {/* this div will be for displaying the current Hero Video or gif or image for large screen where we will have a kind od lowOpacity icon in the middle of the image /video onCLicking that we can change the banner to a newly selected */}
-        <div className="flex-[0.75] border-[1px] border-color-white rounded-md">
-          heroLarge
+    <div className="flex-1 flex max-h-fit flex-col md:max-h-[110vh]">
+       <p className="fixed md:top-0 top-[11vh] left-0 md:left-[14vw] z-20 font-bold text-xl backdrop-blur-md bg-white/20 border border-white/30 rounded-xl p-4 shadow-lg rounded-l-none md:rounded-bl-lg"><Edit/></p>
+      <div className="w-full flex flex-col md:flex-row gap-1 h-fit">
+        <div className="flex-[0.7] border-[1px] border-color-white rounded-md relative">
+          {
+            fileType==="img"?
+            <img src="/assets/bbgif.gif" alt="largeHero" height={"60vh"} className="w-full h-full object-cover"/>:
+            <video/>
+          }
+          <p className="absolute top-1/2 left-1/2 text-3xl -translate-x-1/2 -translate-y-1/2 md:text-7xl font-extrabold">LIT LACES</p>
         </div>
 
-        {/* this div will be for displaying the current Hero Video or gif or image for small screen where we will have a kind od lowOpacity icon in the middle of the image /video  onCLicking  that we can change the banner to a newly selected */}
-        <div className="flex-[0.25] border-[1px] border-color-white rounded-md">
-          heroSmall
+        <div className="flex-[0.3] border-[1px] border-color-white rounded-md relative">
+          {
+            fileType==="img"?
+            <img src="/assets/phonegif.gif" alt="phoneGif" height={"60vh"} className="object-cover w-full h-full"/>:
+            <video/>
+          }
+          <p className="absolute top-1/2 left-1/2 text-3xl -translate-x-1/2 -translate-y-1/ font-extrabold">LIT LACES</p>
         </div>
       </div>
 
-      {/* here we will have three divs for displaying the current banners 1,2,3 with a low opacity icon in the middle on clicking which we can change the banner to a new one */}
-      <div className="w-full flex flex-col md:flex-row gap-1 mt-1 min-h-full md:min-h-[28vh]">
+      <div className="w-full flex flex-col md:flex-row gap-1 mt-1 min-h-full md:min-h-[30vh]">
         <div className="flex-1 border-[1px] border-color-white rounded-md">
-          mini-banner1
+            <img src="/assets/men.jpg" alt="men" height={"30vh"} className="object-cover w-100 h-100"/>
         </div>
         <div className="flex-1 border-[1px] border-color-white rounded-md">
-          mini-baner2
+            <img src="/assets/women.jpg" alt="women" height={"30vh"} className="object-cover w-100 h-100"/>
         </div>
         <div className="flex-1 border-[1px] border-color-white rounded-md">
-          mini-banner3
+            <img src="/assets/all.jpg" alt="all" height={"30vh"} className="object-cover w-100 h-100"/>
         </div>
       </div>
-      {/* here we need a button to chnage the whole appearence at once */}
-      <div>
-        {/* on click of this a modal will open where we can change all the banners and heros at once should be able to upload new ones and preview them before saving */}
-        {/* <button>change all banners/heros</button> */}
-      </div>
+       
     </div>
   );
 };
