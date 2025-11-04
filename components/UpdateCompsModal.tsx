@@ -2,6 +2,7 @@
 
 import { Cross } from "lucide-react";
 import React, { useState } from "react";
+import CloseIcon from '@mui/icons-material/Close';
 
 const UpdateCompsModal = ({setUpdateBannerModal}:{setUpdateBannerModal:Function}) => {
 
@@ -16,7 +17,8 @@ const closeModal=()=>{
   return (
     <div className="p-2 md:p-4 flex flex-col justify-center items-center h-full mx-auto relative backdrop-blur-md overflow-x-scroll
         bg-white/20 border border-white/30 rounded-md">
-        <Cross className="absolute top-4 right-4 cursor-pointer text-white rotate-45" size={24} onClick={closeModal}/>
+              <Cross className="absolute top-2 right-2 hover:scale-110 ease-in-out  rotate-45  cursor-pointer" onClick={closeModal}/>
+
       <h2 className="text-2xl textwhite mb-3">Update Banners</h2>
       <form className="max-w-full md:max-w-[70%] ">
         <div>
@@ -49,8 +51,9 @@ const closeModal=()=>{
             className="hidden"
           />
           {/* preview of the selected sile*/}
-          <div>
-            <img src={heroL} alt="heroLargePreview" className="w-full h-auto mb-4" />
+          <div className="relative">
+            <CloseIcon className="absolute -top-2 -right-2 hover:scale-110 ease-in-out border-[2px] cursor-pointer border-white rounded-full bg-black p-1 md:p-0" />
+            <img src={heroL} alt="heroLargePreview" className="w-[400px] mx-auto h-[400px] aspect-square object-cover my-4" />
           </div>
         </div>
         <div>
@@ -83,11 +86,12 @@ const closeModal=()=>{
             className="hidden"
           />
           {/* preview of the selected sile*/}
-          <div>
+          <div className="relative">
+            <CloseIcon className="absolute -top-2 -right-2 hover:scale-110 ease-in-out border-[2px] cursor-pointer border-white rounded-full bg-black p-1 md:p-0" />
             <img
               src={heroSM}
               alt="heroMobilePreview"
-              className="w-full h-auto mb-4"
+              className="w-[400px] mx-auto h-[400px] aspect-square object-cover my-4"
             />
           </div>
         </div>
@@ -122,10 +126,10 @@ const closeModal=()=>{
           />
 
           {/* preview of the selected files */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <img src={banner1} alt="banner1Preview" className="w-full h-auto mb-4" />
-            <img src={banner2} alt="banner2Preview" className="w-full h-auto mb-4" />
-            <img src={banner3} alt="banner3Preview" className="w-full h-auto mb-4" />
+          <div className="grid grid-cols-3 gap-4  my-3">
+            <SmallImagePreview src={banner1} alt="banner1Preview"/>
+            <SmallImagePreview src={banner2} alt="banner2Preview"/>
+            <SmallImagePreview src={banner3} alt="banner3Preview"/>
           </div>
         </div>
 
@@ -139,5 +143,14 @@ const closeModal=()=>{
     </div>
   );
 };
+
+const SmallImagePreview = ({src,alt}:{src:string,alt:string})=>{
+  return(
+    <div className="relative ">
+      <img src={src} alt={alt} className="w-full h-full aspect-square object-cover "/>
+      <CloseIcon className="absolute -top-2 -right-2 hover:scale-110 ease-in-out border-[2px] cursor-pointer border-white rounded-full bg-black p-1 md:p-0" />
+    </div>
+  );
+}
 
 export default UpdateCompsModal;
