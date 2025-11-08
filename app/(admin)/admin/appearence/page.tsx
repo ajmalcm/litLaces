@@ -12,7 +12,7 @@ const page = () => {
 
   return (
 
-    <div className="flex-1 flex max-h-fit flex-col md:max-h-[110vh]">
+    <div className="flex-1 flex h-full flex-col">
        {
         updateBannerModal && (
           <div className="fixed top-0 left-0 w-full max-h-full z-30 overflow-auto">
@@ -41,15 +41,15 @@ const page = () => {
         </div>
       </div>
 
-      <div className="w-full flex flex-col md:flex-row gap-1 mt-1 min-h-full md:min-h-[30vh]">
+      <div className="w-full flex flex-col md:flex-row gap-1 mt-1 min-h-[20vh] md:min-h-[30vh]">
         <div className="flex-1 border-[1px] border-color-white rounded-md">
-            <img src="/assets/men.jpg" alt="men" height={"30vh"} className="object-cover w-100 h-100"/>
+            <img src="/assets/men.jpg" alt="men" className="w-full h-full aspect-square object-cover "/>
         </div>
         <div className="flex-1 border-[1px] border-color-white rounded-md">
-            <img src="/assets/women.jpg" alt="women" height={"30vh"} className="object-cover w-100 h-100"/>
+            <img src="/assets/women.jpg" alt="women" className="w-full h-full aspect-square object-cover "/>
         </div>
         <div className="flex-1 border-[1px] border-color-white rounded-md">
-            <img src="/assets/all.jpg" alt="all" height={"30vh"} className="object-cover w-100 h-100"/>
+            <img src="/assets/all.jpg" alt="all" className="w-full h-full aspect-square object-cover "/>
         </div>
       </div>
     </div>
