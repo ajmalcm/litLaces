@@ -6,11 +6,11 @@ export const userReducerApi = createApi({
     baseUrl: "/api/",
     credentials: "include",
   }),
-  tagTypes: ["User", "Product", "Cart", "Order", "Admin","stats"], // ✅ declare tags
+  tagTypes: ["User", "Product", "Cart", "Order", "Admin","stats","UI"], 
   endpoints: (builder) => ({
     loadUser: builder.query({
       query: () => "user/me",
-      providesTags: ["User"], // ✅ provides user data
+      providesTags: ["User"], // provides user data
     }),
 
     registerUser: builder.mutation({
@@ -19,7 +19,7 @@ export const userReducerApi = createApi({
         method: "POST",
         body: userData,
       }),
-      invalidatesTags: ["User","stats"], // ✅ refresh user after register
+      invalidatesTags: ["User","stats"], // refresh user after register
     }),
 
     loginUser: builder.mutation({
@@ -28,12 +28,12 @@ export const userReducerApi = createApi({
         method: "POST",
         body: credentials,
       }),
-      invalidatesTags: ["User"], // ✅ refresh after login
+      invalidatesTags: ["User"], // refresh after login
     }),
 
     logoutuser: builder.mutation({
       query: () => "user/logout",
-      invalidatesTags: ["User", "Cart", "Order"], // ✅ clear all user-related caches
+      invalidatesTags: ["User", "Cart", "Order"], // clear all user-related caches
     }),
 
     getProducts: builder.query({
@@ -50,7 +50,7 @@ export const userReducerApi = createApi({
         if (param.length > 0) url += `?${param.join("&")}`;
         return url;
       },
-      providesTags: ["Product"], // ✅ cache by tag
+      providesTags: ["Product"], // cache by tag
     }),
 
     getProductDetails: builder.query({
@@ -69,7 +69,7 @@ export const userReducerApi = createApi({
         method: "POST",
         body: { action, product },
       }),
-      invalidatesTags: ["Cart"], // ✅ refetch cart
+      invalidatesTags: ["Cart"], // refetch cart
     }),
 
     removeFromOrDecreaseCart: builder.mutation({
@@ -78,7 +78,7 @@ export const userReducerApi = createApi({
         method: "POST",
         body: { productId, action, size },
       }),
-      invalidatesTags: ["Cart"], // ✅ refetch cart
+      invalidatesTags: ["Cart"], // refetch cart
     }),
 
     orderPayment: builder.mutation({
@@ -95,7 +95,7 @@ export const userReducerApi = createApi({
         method: "POST",
         body: orderData,
       }),
-      invalidatesTags: ["Order", "Cart","stats"], // ✅ refresh orders & cart
+      invalidatesTags: ["Order", "Cart","stats"], // refresh orders & cart
     }),
 
     getMyOrders: builder.query({
@@ -129,7 +129,7 @@ export const userReducerApi = createApi({
         body: { status },
         method: "POST",
       }),
-      invalidatesTags: ["Order", "Admin","stats"], // ✅ refresh orders after update
+      invalidatesTags: ["Order", "Admin","stats"], // refresh orders after update
     }),
 
     deleteOrder:builder.mutation({
@@ -151,7 +151,7 @@ export const userReducerApi = createApi({
         method:"POST",
         body:{id,name,email,phone,role}
       }),
-      invalidatesTags:["User","Admin","stats"], // ✅ refresh users after update
+      invalidatesTags:["User","Admin","stats"], // refresh users after update
     }),
 
     deleteUser:builder.mutation({
@@ -168,7 +168,7 @@ export const userReducerApi = createApi({
         method: "POST",
         body: productData,
       }),
-      invalidatesTags: ["Product", "Admin","stats"], // ✅ refresh products after adding new one
+      invalidatesTags: ["Product", "Admin","stats"], // refresh products after adding new one
     }),
 
     updateProduct: builder.mutation({
@@ -177,7 +177,7 @@ export const userReducerApi = createApi({
         method: "POST",
         body: productData,
       }),
-      invalidatesTags: ["Product", "Admin","stats"], // ✅ refresh products after update
+      invalidatesTags: ["Product", "Admin","stats"], // refresh products after update
     }),
 
 
@@ -192,8 +192,23 @@ export const userReducerApi = createApi({
     getAdminStats:builder.query({
       query:()=>"admin/stats",
       providesTags:["Admin","Product","User","Order"]
+    }),
+
+    getAdminUI:builder.query({
+      query:()=>"admin/appearence",
+      providesTags:["UI"]
+    }),
+
+    updateAdminUiUpdate:builder.mutation({
+      query:(formData)=>({
+        url:"admin/appearence/update",
+        method:"POST",
+        body:formData
+      }),
+      invalidatesTags:["UI"]
     })
   }),
+
 
 
 
@@ -225,4 +240,6 @@ export const {
   useDeleteUserMutation,
   useDeleteProductMutation,
   useGetAdminStatsQuery,
+  useGetAdminUIQuery,
+  useUpdateAdminUiUpdateMutation
 } = userReducerApi;
