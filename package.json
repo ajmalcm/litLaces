@@ -17,6 +17,7 @@
     "@radix-ui/react-select": "^2.2.6",
     "@reduxjs/toolkit": "^2.6.1",
     "@vercel/speed-insights": "^1.2.0",
+    "axios": "^1.13.2",
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.7.0",

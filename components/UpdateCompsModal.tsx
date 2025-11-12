@@ -5,6 +5,7 @@ import { Cross } from "lucide-react";
 import CloseIcon from "@mui/icons-material/Close";
 import { useUpdateAdminUiUpdateMutation } from "@/redux/services/userReducers";
 import { toast } from "sonner";
+import axios from "axios";
 
 const UpdateCompsModal = ({ setUpdateBannerModal }: { setUpdateBannerModal: Function }) => {
   const [updateAdminUiUpdate,{isLoading,error,data}] = useUpdateAdminUiUpdateMutation();
@@ -51,35 +52,40 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     const res = await fetch("/api/cloudinary/signature");
     const sigData = await res.json();
 
+    // Step 2: Upload all files to Cloudinary
     const uploadPromises = Object.entries(bannerData).map(async ([key, file]) => {
       if (!file) return null;
 
+      const resourceType = file.type.startsWith("video/") ? "video" : "image";
       const formData = new FormData();
+
       formData.append("file", file);
       formData.append("api_key", sigData.api_key);
       formData.append("timestamp", sigData.timestamp);
       formData.append("signature", sigData.signature);
       formData.append("folder", "banners");
-      formData.append(
-        "resource_type",
-        file.type.startsWith("video/") ? "video" : "image"
-      );
 
-      // Step 2: Upload directly to Cloudinary
-      const uploadRes = await fetch(
-        `https://api.cloudinary.com/v1_1/${sigData.cloud_name}/${
-          file.type.startsWith("video") ? "video" : "image"
-        }/upload`,
+      // 🔹 Use axios for streaming large files
+      const uploadRes = await axios.post(
+        `https://api.cloudinary.com/v1_1/${sigData.cloud_name}/${resourceType}/upload`,
+        formData,
         {
-          method: "POST",
-          body: formData,
+          headers: { "Content-Type": "multipart/form-data" },
+          timeout: 0, // disable timeout for large video uploads
+          onUploadProgress: (progressEvent) => {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total ?? 1)
+            );
+            console.log(`${key} upload progress: ${percent}%`);
+          },
         }
       );
 
-      const uploadData = await uploadRes.json();
+      const uploadData = uploadRes.data;
       if (uploadData.secure_url) {
         return { key, url: uploadData.secure_url, public_id: uploadData.public_id };
       }
+
       return null;
     });
 
@@ -94,17 +100,17 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       };
     });
 
-    // Step 4: Send URLs to backend
+    // Step 4: Send URLs to backend to update DB
     const { data, error } = await updateAdminUiUpdate(updateData);
 
     if (data?.success) {
-      toast.success(data.message);
+      toast.success(data.message || "Banners updated successfully");
       setIsChanged(false);
     } else {
       toast.error("Update failed");
     }
   } catch (err) {
-    console.error(err);
+    console.error("Upload error:", err);
     toast.error("Something went wrong during upload");
   }
 };
