@@ -3,12 +3,17 @@
 import UpdateCompsModal from "@/components/UpdateCompsModal";
 import { Edit } from "lucide-react";
 import React,{useState} from "react";
+import { useGetAdminUIQuery } from "@/redux/services/userReducers";
 
 
 const page = () => {
 
   const fileType="img"; //will be video or audio
   const [updateBannerModal,setUpdateBannerModal]=useState(false);
+
+  const {data:dynamicUI,error,isLoading}=useGetAdminUIQuery("");
+  console.log(dynamicUI);
+
 
   return (
 

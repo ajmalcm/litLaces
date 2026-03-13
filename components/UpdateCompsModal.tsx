@@ -2,13 +2,19 @@
 
 import React, { useState, useEffect } from "react";
 import { Cross } from "lucide-react";
-import CloseIcon from "@mui/icons-material/Close";
 import { useUpdateAdminUiUpdateMutation } from "@/redux/services/userReducers";
 import { toast } from "sonner";
-import axios from "axios";
+
+import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { fetchFile } from "@ffmpeg/util";
+
+const ffmpeg = new FFmpeg();
 
 const UpdateCompsModal = ({ setUpdateBannerModal }: { setUpdateBannerModal: Function }) => {
-  const [updateAdminUiUpdate,{isLoading,error,data}] = useUpdateAdminUiUpdateMutation();
+  const [updateAdminUiUpdate, { isLoading, error, data }] =
+    useUpdateAdminUiUpdateMutation();
+
+  const [uploading, setUploading] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
 
   const [bannerData, setBannerData] = useState<Record<string, File | null>>({
@@ -19,7 +25,9 @@ const UpdateCompsModal = ({ setUpdateBannerModal }: { setUpdateBannerModal: Func
     banner3: null,
   });
 
-  const [bannerDataPreview, setBannerDataPreview] = useState<Record<string, string>>({
+  const [bannerDataPreview, setBannerDataPreview] = useState<
+    Record<string, string>
+  >({
     heroL: "/assets/bbgif.gif",
     heroSM: "/assets/phoneGif.gif",
     banner1: "/assets/men.jpg",
@@ -27,10 +35,52 @@ const UpdateCompsModal = ({ setUpdateBannerModal }: { setUpdateBannerModal: Func
     banner3: "/assets/all.jpg",
   });
 
-  /** Close modal */
   const closeModal = () => setUpdateBannerModal(false);
 
-  /** Handle file input changes */
+  /** -------------------------
+   *  VIDEO COMPRESSION (FFmpeg)
+   *  ------------------------- */
+  const compressVideo = async (file: File): Promise<File> => {
+    if (!ffmpeg.loaded) {
+      console.log("%c⏳ Loading FFmpeg...", "color: yellow");
+      await ffmpeg.load();
+    }
+
+    console.log("%c🎞 Compressing: " + file.name, "color: cyan");
+
+    ffmpeg.writeFile("input.mp4", await fetchFile(file));
+
+    ffmpeg.on("log", ({ message }) => {
+      console.log("%c[ffmpeg] " + message, "color: gray");
+    });
+
+    ffmpeg.on("progress", ({ progress }) => {
+      const percent = Math.round(progress * 100);
+      console.log(`🎚 Compression progress: ${percent}%`);
+    });
+
+    await ffmpeg.exec([
+      "-i",
+      "input.mp4",
+      "-vf",
+      "scale='min(720,iw)':-2",
+      "-b:v",
+      "1M",
+      "-preset",
+      "veryfast",
+      "output.mp4",
+    ]);
+
+    const data = await ffmpeg.readFile("output.mp4");
+
+    console.log("%c✔ Compression complete", "color: lightgreen");
+
+    return new File([data], `compressed-${file.name}`, {
+      type: "video/mp4",
+    });
+  };
+
+  /** FILE SELECT HANDLER */
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
     if (!files?.length) return;
@@ -42,96 +92,100 @@ const UpdateCompsModal = ({ setUpdateBannerModal }: { setUpdateBannerModal: Func
     setBannerDataPreview((prev) => ({ ...prev, [name]: previewUrl }));
   };
 
-  /** Submit selected files */
-  /** Submit selected files */
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  /** SUBMIT HANDLER */
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
+  setUploading(true);
 
   try {
-    // Step 1: Get Cloudinary signature
+    toast.info("Preparing upload...");
+
     const res = await fetch("/api/cloudinary/signature");
     const sigData = await res.json();
 
-    // Step 2: Upload all files to Cloudinary
+    // Helper: upload with progress
+    const uploadWithProgress = (formData: FormData, key: string, resourceType: string) => {
+      return new Promise<any>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open(
+          "POST",
+          `https://api.cloudinary.com/v1_1/${sigData.cloud_name}/${resourceType}/upload`
+        );
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            console.log(`⬆️ Uploading ${key}: ${percent}%`);
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            const response = JSON.parse(xhr.responseText);
+            // attach the original field key so we can map responses back to form fields
+            resolve({ ...response, key });
+          } else {
+            reject(xhr.responseText);
+          }
+        };
+
+        xhr.onerror = () => reject(xhr.responseText);
+
+        xhr.send(formData);
+      });
+    };
+
     const uploadPromises = Object.entries(bannerData).map(async ([key, file]) => {
       if (!file) return null;
 
-      const resourceType = file.type.startsWith("video/") ? "video" : "image";
-      const formData = new FormData();
+      let uploadFile = file;
 
-      formData.append("file", file);
+      if (file.type.startsWith("video/")) {
+        toast.info(`Compressing ${key}...`);
+        uploadFile = await compressVideo(file);
+      }
+
+      const resourceType = uploadFile.type.startsWith("video/") ? "video" : "image";
+
+      const formData = new FormData();
+      formData.append("file", uploadFile);
       formData.append("api_key", sigData.api_key);
       formData.append("timestamp", sigData.timestamp);
       formData.append("signature", sigData.signature);
       formData.append("folder", "banners");
 
-      // 🔹 Use axios for streaming large files
-      const uploadRes = await axios.post(
-        `https://api.cloudinary.com/v1_1/${sigData.cloud_name}/${resourceType}/upload`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          timeout: 0, // disable timeout for large video uploads
-          onUploadProgress: (progressEvent) => {
-            const percent = Math.round(
-              (progressEvent.loaded * 100) / (progressEvent.total ?? 1)
-            );
-            console.log(`${key} upload progress: ${percent}%`);
-          },
-        }
-      );
-
-      const uploadData = uploadRes.data;
-      if (uploadData.secure_url) {
-        return { key, url: uploadData.secure_url, public_id: uploadData.public_id };
-      }
-
-      return null;
+      return await uploadWithProgress(formData, key, resourceType);
     });
 
     const uploaded = (await Promise.all(uploadPromises)).filter(Boolean);
 
-    // Step 3: Prepare URLs for DB update
     const updateData: Record<string, { url: string; public_id: string }> = {};
     uploaded.forEach((item: any) => {
       updateData[item.key] = {
-        url: item.url,
+        url: item.secure_url,
         public_id: item.public_id,
       };
     });
 
-    // Step 4: Send URLs to backend to update DB
-    const { data, error } = await updateAdminUiUpdate(updateData);
+  console.log("Update payload:", updateData);
+  const { data } = await updateAdminUiUpdate(updateData);
 
     if (data?.success) {
-      toast.success(data.message || "Banners updated successfully");
+      toast.success("Banners updated successfully");
       setIsChanged(false);
-    } else {
-      toast.error("Update failed");
     }
   } catch (err) {
-    console.error("Upload error:", err);
-    toast.error("Something went wrong during upload");
+    console.error(err);
+    toast.error("Upload failed");
   }
+
+  setUploading(false);
 };
 
 
-  /** Enable submit button only if something changed */
   useEffect(() => {
-    setIsChanged(Object.values(bannerData).some((value) => value !== null));
-
-    if(data?.success)
-    {
-      toast.success(data?.message)
-    }
-
-    if (error && "data" in error) {
-      const errorMessage = (error.data as { message: string })?.message;
-      toast.error(errorMessage)
-    }
-
-
-  }, [bannerData,data?.success,error]);
+    setIsChanged(Object.values(bannerData).some((v) => v !== null));
+  }, [bannerData]);
 
   return (
     <div className="p-4 flex flex-col justify-center items-center h-full mx-auto relative backdrop-blur-md bg-white/20 border border-white/30 rounded-md">
@@ -143,41 +197,55 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       <h2 className="text-2xl text-white mb-3">Update Banners</h2>
 
       <form className="max-w-full md:max-w-[70%]" onSubmit={handleSubmit}>
-        {/* HERO SECTIONS */}
+        {/* Inputs */}
         <FileInput label="Hero Large" name="heroL" onChange={changeHandler} />
         <MediaPreview src={bannerDataPreview.heroL} file={bannerData.heroL} />
 
         <FileInput label="Hero Mobile" name="heroSM" onChange={changeHandler} />
         <MediaPreview src={bannerDataPreview.heroSM} file={bannerData.heroSM} />
 
-        {/* SMALL BANNERS */}
         <div className="flex justify-between gap-2">
           {["banner1", "banner2", "banner3"].map((name) => (
-            <FileInput key={name} label={name[0].toUpperCase()+"-"+name[name.length-1].toLocaleUpperCase()} name={name} onChange={changeHandler} />
+            <FileInput
+              key={name}
+              label={name.toUpperCase()}
+              name={name}
+              onChange={changeHandler}
+            />
           ))}
         </div>
 
         <div className="grid grid-cols-3 gap-4 my-3">
           {["banner1", "banner2", "banner3"].map((name) => (
-            <MediaPreview key={name} src={bannerDataPreview[name]} file={bannerData[name]} small />
+            <MediaPreview
+              key={name}
+              src={bannerDataPreview[name]}
+              file={bannerData[name]}
+              small
+            />
           ))}
         </div>
 
         <button
           type="submit"
-          disabled={!isChanged}
-          className={`bg-blue-600 text-white px-4 py-2 rounded-md transition w-full ${
-            isChanged ? "hover:bg-blue-700" : "opacity-60 cursor-not-allowed"
-          }`}
+          disabled={!isChanged || uploading}
+          className={`bg-blue-600 text-white px-4 py-2 rounded-md w-full transition 
+            ${
+              !isChanged || uploading
+                ? "opacity-60 cursor-not-allowed"
+                : "hover:bg-blue-700"
+            }`}
         >
-          {isLoading?"Updating...":"Update UI"}
+          {uploading ? "Uploading..." : "Update UI"}
         </button>
       </form>
     </div>
   );
 };
 
-/** File upload button */
+/* ------------------------
+   COMPONENTS
+   ------------------------ */
 const FileInput = ({
   label,
   name,
@@ -191,9 +259,8 @@ const FileInput = ({
     <label
       htmlFor={name}
       className="inline-flex justify-center items-center px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 
-               text-white font-semibold shadow-lg cursor-pointer transition-transform hover:scale-105 hover:shadow-xl w-full gap-2"
+               text-white font-semibold shadow-lg cursor-pointer transition-transform hover:scale-105 w-full gap-2"
     >
-      <UploadIcon />
       {label}
     </label>
     <input
@@ -207,7 +274,6 @@ const FileInput = ({
   </>
 );
 
-/** Video/Image preview */
 const MediaPreview = ({
   src,
   file,
@@ -218,41 +284,20 @@ const MediaPreview = ({
   small?: boolean;
 }) => (
   <div className="relative w-fit mx-auto">
-    {file instanceof File && file.type.startsWith("video") ? (
+    {file?.type.startsWith("video") ? (
       <video
         src={src}
+        className={`${small ? "w-full aspect-square" : "w-[400px] h-[400px] my-4"} rounded-lg object-cover`}
         controls
-        autoPlay
         muted
-        loop
-        className={`object-cover rounded-lg ${small ? "aspect-square w-full" : "w-[400px] h-[400px] my-4"}`}
       />
     ) : (
       <img
         src={src}
-        alt="preview"
-        className={`object-cover rounded-lg ${small ? "aspect-square w-full" : "w-[400px] h-[400px] my-4"}`}
+        className={`${small ? "w-full aspect-square" : "w-[400px] h-[400px] my-4"} rounded-lg object-cover`}
       />
     )}
-    <CloseIcon className="absolute -top-2 -right-2 hover:scale-110 cursor-pointer border border-white rounded-full bg-black p-1" />
   </div>
-);
-
-/** Upload icon */
-const UploadIcon = () => (
-  <svg
-    className="w-5 h-5"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v9m0-9l-3 3m3-3l3 3m0-9a4 4 0 11-8 0 4 4 0 018 0z"
-    />
-  </svg>
 );
 
 export default UpdateCompsModal;

@@ -6,7 +6,7 @@ export const GET=async(req:NextRequest)=>{
     try{
        await connectDB();
         const dynamicUI=await Banner.find(); // since there will be only one document
-        return NextResponse.json({data:dynamicUI},{status:200});
+        return NextResponse.json({data:dynamicUI,message:"Dynamic UI fetched successfully"},{status:200});
     }
     
     catch(error)

@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import bannerModel from "@/lib/db/models/banner.model";
+import { connectDB } from "@/lib/db/connection";
 
 export async function POST(req: Request) {
   try {
+    await connectDB();
     const update = await req.json(); // URLs only, no files
     const current = await bannerModel.findOne();
 
