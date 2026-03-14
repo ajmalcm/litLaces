@@ -4,10 +4,10 @@ import Brands from "@/components/Brands";
 // import HomeAbout from "@/components/HomeAbout";
 // import EmailSection from "@/components/EmailSection";
 import { BannerItems } from "@/utils/temp";
-import {useLoadUserQuery } from "@/redux/services/userReducers";
+import {useGetAdminUIQuery, useLoadUserQuery } from "@/redux/services/userReducers";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setAdmin, setAuthenticated, setCart, setName } from "@/redux/reducers/userSlice";
+import { setAdmin, setAuthenticated, setBannerData, setCart, setName } from "@/redux/reducers/userSlice";
 import { toast } from "sonner";
 import Gif from "@/public/assets/phoneGif.gif";
 import Bgif from "@/public/assets/bbgif.gif";
@@ -20,7 +20,9 @@ declare global {
 }
 
 const Home = () => {
-  const { isLoading, data, error } = useLoadUserQuery("");
+  // Resolve user query safely (avoid shadowing)
+  const { isLoading, data: userData, error } = useLoadUserQuery("");
+  const { data: bannerData, isSuccess, error: bannerError } = useGetAdminUIQuery("");
   const { isAdmin, isAuthenticated ,name} = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -35,20 +37,44 @@ const Home = () => {
       return;
     }
 
-    if (data && data.success ) {
+    if (userData && userData.success ) {
       dispatch(setAuthenticated(true));
-      dispatch(setAdmin(data?.isAdmin));
-      dispatch(setName(data?.user?.name));
-      toast.success(data.message);
-       data.success && setTimeout(()=>{
-          toast.success(`Welcome ${data?.user?.name} 😎!`);
+      dispatch(setAdmin(userData?.isAdmin));
+      dispatch(setName(userData?.user?.name));
+      toast.success(userData.message);
+       userData.success && setTimeout(()=>{
+          toast.success(`Welcome ${userData?.user?.name} 😎!`);
           },5000)
     } else {
       dispatch(setAuthenticated(false));
       dispatch(setAdmin(false));
     }
+
+    if(bannerError) {
+      if ("data" in bannerError) {
+        const errorMessage = (bannerError.data as { message: string })?.message;
+        toast.error(errorMessage);
+      }
+      return;
+    }
+
+    if(bannerData && isSuccess)
+    {
+      // bannerData might be { data: doc } or doc directly — handle both
+      const banner = (bannerData as any)?.data ?? bannerData;
+
+      // quick debug so you can see the exact shape in console
+      console.log("Banner Data (raw):", bannerData);
+      console.log("Banner Data (resolved):", banner);
+
+      // safe destructure with fallback to empty object -> never throws
+      // const { heroL = null, heroSM = null, banner1 = null, banner2 = null, banner3 = null } = banner ?? {};
+
+      // optional: put banner into redux so other components read same source
+      dispatch(setBannerData(banner));
+    }
    
-  }, [error, dispatch,data]);  
+  }, [error, dispatch,userData,bannerData,bannerError]);  
 
 
  

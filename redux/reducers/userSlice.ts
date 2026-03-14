@@ -15,14 +15,58 @@ interface UserState {
             public_id: string;
             url: string;
         };
-    }>
+    }>,
+    bannerData?: {
+        heroL?: {
+            public_id: string;
+            url: string;
+        };
+        heroSM?: {
+            public_id: string;
+            url: string;
+        };
+        banner1?: {
+            public_id: string;
+            url: string;
+        };
+        banner2?: {
+            public_id: string;
+            url: string;
+        };
+        banner3?: {
+            public_id: string;
+            url: string;
+        };
+    }
 }
 
 const initialState: UserState = {
     isAuthenticated: false,
     isAdmin: false,
     name: '',
-    cart:[]
+    cart: [],
+    bannerData: {
+        heroL: {
+            public_id: '',
+            url: ''
+        },
+        heroSM: {
+            public_id: '',
+            url: ''
+        },
+        banner1: {
+            public_id: '',
+            url: ''
+        },
+        banner2: {
+            public_id: '',
+            url: ''
+        },
+        banner3: {
+            public_id: '',
+            url: ''
+        }
+    }
 };
 
 const userSlice = createSlice({
@@ -40,9 +84,12 @@ const userSlice = createSlice({
         },
         setCart(state,action:PayloadAction<UserState['cart']>) {
             state.cart = action.payload;
+        },
+        setBannerData(state, action: PayloadAction<UserState['bannerData']>) {
+            state.bannerData = action.payload;
         }
     },
 });
 
-export const { setAuthenticated, setAdmin ,setName,setCart} = userSlice.actions;
+export const { setAuthenticated, setAdmin ,setName,setCart,setBannerData} = userSlice.actions;
 export default userSlice;
