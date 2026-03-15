@@ -45,28 +45,25 @@ const initialState: UserState = {
     isAdmin: false,
     name: '',
     cart: [],
-    bannerData: {
-        heroL: {
-            public_id: '',
-            url: ''
-        },
-        heroSM: {
-            public_id: '',
-            url: ''
-        },
-        banner1: {
-            public_id: '',
-            url: ''
-        },
-        banner2: {
-            public_id: '',
-            url: ''
-        },
-        banner3: {
-            public_id: '',
-            url: ''
+    bannerData: ((): UserState['bannerData'] => {
+        const empty = {
+            heroL: { public_id: '', url: '' },
+            heroSM: { public_id: '', url: '' },
+            banner1: { public_id: '', url: '' },
+            banner2: { public_id: '', url: '' },
+            banner3: { public_id: '', url: '' },
+        } as UserState['bannerData'];
+
+        try {
+            if (typeof window === 'undefined') return empty;
+            const raw = localStorage.getItem('bannerData');
+            if (!raw) return empty;
+            const parsed = JSON.parse(raw);
+            return parsed ?? empty;
+        } catch (e) {
+            return empty;
         }
-    }
+    })()
 };
 
 const userSlice = createSlice({

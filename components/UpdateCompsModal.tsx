@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile } from "@ffmpeg/util";
+import { useSelector } from "react-redux";
 
 const ffmpeg = new FFmpeg();
 
@@ -16,23 +17,25 @@ const UpdateCompsModal = ({ setUpdateBannerModal }: { setUpdateBannerModal: Func
 
   const [uploading, setUploading] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
+  const { bannerData: bannerRedux } = useSelector((state: any) => state.auth);
+  const { heroSM, heroL, banner1, banner2, banner3 } = bannerRedux || {}; //get banner data from redux
 
   const [bannerData, setBannerData] = useState<Record<string, File | null>>({
-    heroL: null,
-    heroSM: null,
-    banner1: null,
-    banner2: null,
-    banner3: null,
+    heroL: heroL?.url ? null : null, //if url exists, we start with null (no change) otherwise null (can upload)
+    heroSM: heroSM?.url ? null : null,
+    banner1: banner1?.url ? null : null,
+    banner2: banner2?.url ? null : null,
+    banner3: banner3?.url ? null : null,
   });
 
   const [bannerDataPreview, setBannerDataPreview] = useState<
     Record<string, string>
   >({
-    heroL: "/assets/bbgif.gif",
-    heroSM: "/assets/phoneGif.gif",
-    banner1: "/assets/men.jpg",
-    banner2: "/assets/women.jpg",
-    banner3: "/assets/all.jpg",
+    heroL: heroL?.url || "/assets/bbgif.gif", //if url exists use it, otherwise fallback to placeholder
+    heroSM: heroSM?.url || "/assets/phoneGif.gif",
+    banner1: banner1?.url || "/assets/men.jpg",
+    banner2: banner2?.url || "/assets/women.jpg",
+    banner3: banner3?.url || "/assets/all.jpg",
   });
 
   const closeModal = () => setUpdateBannerModal(false);
@@ -284,7 +287,7 @@ const MediaPreview = ({
   small?: boolean;
 }) => (
   <div className="relative w-fit mx-auto">
-    {file?.type.startsWith("video") ? (
+    {file?.type.endsWith(".mp4") ? (
       <video
         src={src}
         className={`${small ? "w-full aspect-square" : "w-[400px] h-[400px] my-4"} rounded-lg object-cover`}
