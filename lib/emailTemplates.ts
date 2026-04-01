@@ -1,17 +1,20 @@
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://litlaces.example';
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://lit-laces.vercel.app').replace(/\/$/, '');
+// Use the public URL for the logo so server-side templates can reference it directly
 const LOGO_URL = `${SITE_URL}/icons/lit_laces.png`;
 
 function baseStyles() {
   return `
     body { margin:0; padding:0; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
-    .container { width:100%; background:#f6f7fb; padding:24px 12px; }
-    .card { max-width:600px; margin:0 auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 4px 16px rgba(18,24,40,0.06); }
-    .header { padding:20px; text-align:center; }
+  .container { width:100%; background:#f6f7fb; padding:24px 12px; }
+  .card { max-width:600px; margin:0 auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 4px 16px rgba(18,24,40,0.06); }
+  /* dark header so logo section stands out across email clients */
+  .header { padding:20px; text-align:center; background: #0f1724; }
+  .header img { display:block; margin:0 auto; max-width:140px; height:auto; }
     .content { padding:24px; color:#0f1724; line-height:1.5; }
     .button { display:inline-block; background:#111827; color:#fff; padding:12px 20px; border-radius:8px; text-decoration:none; }
     .muted { color:#6b7280; font-size:13px; }
     .divider { height:1px; background:#eef2f7; margin:18px 0; }
-    @media (max-width:420px){ .content{ padding:18px; } .header img{ height:36px } }
+    @media (max-width:420px){ .content{ padding:18px; } .header img{ max-width:120px; height:auto } }
   `;
 }
 
@@ -65,7 +68,7 @@ export function orderConfirmationTemplate(order: any) {
       <tr>
         <td style="padding:8px 0">${it.name}</td>
         <td style="padding:8px 0; text-align:center">${it.quantity}</td>
-        <td style="padding:8px 0; text-align:right">$${it.price}</td>
+        <td style="padding:8px 0; text-align:right">₹${it.price}</td>
       </tr>
     `)
     .join('');
@@ -108,15 +111,15 @@ export function orderConfirmationTemplate(order: any) {
 
           <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center">
             <div style="color:#374151">Subtotal</div>
-            <div style="font-weight:600">$${order.itemsPrice || order.totalAmount}</div>
+            <div style="font-weight:600">₹${order.itemsPrice || order.totalAmount}</div>
           </div>
           <div style="margin-top:6px; display:flex; justify-content:space-between; align-items:center">
             <div class="muted">Shipping</div>
-            <div class="muted">$${order.shippingPrice || 0}</div>
+            <div class="muted">₹${order.shippingPrice || 0}</div>
           </div>
           <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; font-size:16px">
             <div style="font-weight:700">Total</div>
-            <div style="font-weight:700">$${order.totalAmount}</div>
+            <div style="font-weight:700">₹${order.totalAmount}</div>
           </div>
 
           <div style="margin-top:18px; text-align:center">

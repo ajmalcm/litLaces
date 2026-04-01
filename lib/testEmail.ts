@@ -5,7 +5,7 @@ dotenv.config();
 // Import sendEmail after dotenv runs so environment variables are available to the email module
 (async () => {
   try {
-    const { sendEmail } = await import("./email.ts");
+    const { sendEmail } = await import("./email");
 
     const info = await sendEmail({
       to: "ajmalcm22@gmail.com",
