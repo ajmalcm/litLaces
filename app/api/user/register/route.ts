@@ -1,5 +1,7 @@
 import { connectDB } from "@/lib/db/connection";
 import userModel from "@/lib/db/models/user.model";
+import sendEmail from '@/lib/email';
+import { welcomeTemplate } from '@/lib/emailTemplates';
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 
@@ -45,6 +47,17 @@ export async function POST(req: Request) {
       });
 
       // Set a cookie with expiration
+      // Send welcome email (best-effort)
+      try {
+        await sendEmail({
+          to: email,
+          subject: 'Welcome to Lit Laces',
+          html: welcomeTemplate(name),
+        });
+      } catch (e) {
+        console.error('Failed to send welcome email', e);
+      }
+
       const response = NextResponse.json(
         { user, message: "user registered successfully!",success:true },
         { status: 201 }

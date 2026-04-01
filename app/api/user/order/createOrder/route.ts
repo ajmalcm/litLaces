@@ -2,6 +2,8 @@ import { NextRequest,NextResponse } from "next/server";
 import { connectDB } from "@/lib/db/connection";
 import { Order } from "@/lib/db/models/order.model";
 import { isAuthenticatedUser } from "@/lib/middleware/auth";
+import sendEmail from '@/lib/email';
+import { orderConfirmationTemplate } from '@/lib/emailTemplates';
 
 export const POST=async(req:NextRequest)=>{
     try{
@@ -22,6 +24,17 @@ export const POST=async(req:NextRequest)=>{
             totalAmount,
             isPaid,
         })
+
+                // send confirmation email (best-effort)
+                try {
+                    await sendEmail({
+                        to: shippingInfo.email,
+                        subject: 'Order Confirmation — Lit Laces',
+                        html: orderConfirmationTemplate(order),
+                    });
+                } catch (e) {
+                    console.error('Failed to send order confirmation email', e);
+                }
 
         return NextResponse.json({
             success:true,
