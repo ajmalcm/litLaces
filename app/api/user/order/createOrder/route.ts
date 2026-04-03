@@ -3,7 +3,7 @@ import { connectDB } from "@/lib/db/connection";
 import { Order } from "@/lib/db/models/order.model";
 import { isAuthenticatedUser } from "@/lib/middleware/auth";
 import sendEmail from '@/lib/email';
-import { orderConfirmationTemplate } from '@/lib/emailTemplates';
+import { orderConfirmationTemplate, adminOrderNotificationTemplate } from '@/lib/emailTemplates';
 
 export const POST=async(req:NextRequest)=>{
     try{
@@ -34,6 +34,21 @@ export const POST=async(req:NextRequest)=>{
                     });
                 } catch (e) {
                     console.error('Failed to send order confirmation email', e);
+                }
+                // notify admin (best-effort) if ADMIN_EMAIL is configured
+                try {
+                    const adminEmail = process.env.ADMIN_EMAIL;
+                    if (adminEmail) {
+                        const site = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://lit-laces.vercel.app';
+                        const adminOrderUrl = `${site.replace(/\/$/, '')}/admin/allOrders/${order._id}`;
+                                                await sendEmail({
+                                                        to: adminEmail,
+                                                        subject: `New order placed — ${order._id}`,
+                                                        html: adminOrderNotificationTemplate(order, user as any),
+                                                });
+                    }
+                } catch (e) {
+                    console.error('Failed to send admin notification email', e);
                 }
 
         return NextResponse.json({

@@ -175,3 +175,69 @@ export function orderStatusUpdateTemplate(order: any, status: string) {
   </html>
   `;
 }
+
+export function adminOrderNotificationTemplate(order: any, user?: any) {
+  const preheader = `New order ${order._id} placed — ${order.orderItems?.length || 0} items`;
+  const adminOrderUrl = `${SITE_URL}/admin/allOrders/${order._id}`;
+  const itemsHtml = (order.orderItems || [])
+    .map((it: any) => `
+      <tr>
+        <td style="padding:6px 0">${it.name}</td>
+        <td style="padding:6px 0; text-align:center">${it.quantity}</td>
+        <td style="padding:6px 0; text-align:right">₹${it.price}</td>
+      </tr>
+    `)
+    .join('');
+
+  return `
+  <!doctype html>
+  <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>${baseStyles()}</style>
+  </head>
+  <body>
+    <span style="display:none;max-height:0px;overflow:hidden;">${preheader}</span>
+    <div class="container">
+      <div class="card">
+        <div class="header"><a href="${SITE_URL}"><img src="${LOGO_URL}" alt="Lit Laces" width="120"/></a></div>
+        <div class="content">
+          <h2 style="margin:0 0 8px">New order received</h2>
+          <p style="margin:0">Order ID: <strong>${order._id}</strong></p>
+          <p style="margin-top:6px">Customer: <strong>${user?.name || order.shippingInfo?.firstName || 'Guest'}</strong> — ${order.shippingInfo?.email || 'no-email'}</p>
+
+          <div style="margin-top:12px">
+            <table style="width:100%; border-collapse:collapse">
+              <thead>
+                <tr style="border-bottom:1px solid #eef2f7">
+                  <th style="text-align:left; padding-bottom:8px">Item</th>
+                  <th style="text-align:center; padding-bottom:8px">Qty</th>
+                  <th style="text-align:right; padding-bottom:8px">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+            </table>
+          </div>
+
+          <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center">
+            <div style="color:#374151">Total</div>
+            <div style="font-weight:700">₹${order.totalAmount}</div>
+          </div>
+
+          <div style="margin-top:16px; text-align:center">
+            <a class="button" href="${adminOrderUrl}">Open in admin</a>
+          </div>
+
+          <div class="divider"></div>
+          <p class="muted">Shipping to: ${order.shippingInfo?.address || ''} ${order.shippingInfo?.city || ''} ${order.shippingInfo?.postalCode || ''}</p>
+          <p style="margin-top:10px; font-size:13px" class="muted">Order created at: ${new Date(order.createdAt || Date.now()).toLocaleString()}</p>
+        </div>
+      </div>
+    </div>
+  </body>
+  </html>
+  `;
+}
